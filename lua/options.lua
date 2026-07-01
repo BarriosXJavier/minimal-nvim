@@ -36,7 +36,7 @@ opt.textwidth = 0
 vim.diagnostic.config {
     virtual_text = true,
     signs = true,
-    update_in_insert = true,
+    update_in_insert = false,
 }
 
 vim.cmd.packadd("gruber-darker.nvim")
