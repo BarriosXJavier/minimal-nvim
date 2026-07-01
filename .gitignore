@@ -1,0 +1,32 @@
+# Neovim runtime artifacts
+*.log
+nvim.log
+shada
+swap/
+*.swp
+*.swo
+*.swn
+*.swm
+*.tmp
+*.bak
+*.backup
+*.un~
+
+# Session/history files
+.netrwhist
+Session.vim
+Sessionx.vim
+viminfo
+
+# Generated editor state
+tags
+tags.*
+cscope.out
+
+# OS clutter
+.DS_Store
+Thumbs.db
+
+# Dependency/build caches
+/.cache/
+/.mason/

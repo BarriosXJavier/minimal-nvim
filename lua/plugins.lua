@@ -1,0 +1,178 @@
+vim.pack.add({
+	{ src = "https://github.com/nvim-tree/nvim-web-devicons" },
+	{ src = "https://github.com/nvim-tree/nvim-tree.lua" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+	{ src = "https://github.com/neovim/nvim-lspconfig" },
+	{ src = "https://github.com/folke/which-key.nvim" },
+	{ src = "https://github.com/folke/trouble.nvim" },
+	{ src = "https://github.com/chentoast/marks.nvim" },
+	{ src = "https://github.com/nvim-telescope/telescope.nvim" },
+	{ src = "https://github.com/nvim-lua/plenary.nvim" },
+	{ src = "https://github.com/blazkowolf/gruber-darker.nvim" },
+	{ src = "https://github.com/windwp/nvim-autopairs" },
+	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
+	{ src = "https://github.com/saghen/blink.cmp" },
+	{ src = "https://github.com/akinsho/bufferline.nvim" },
+	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
+	{ src = "https://github.com/akinsho/toggleterm.nvim" },
+	{ src = "https://github.com/mfussenegger/nvim-dap" },
+	{ src = "https://github.com/rcarriga/nvim-dap-ui" },
+	{ src = "https://github.com/nvim-neotest/nvim-nio" },
+	{ src = "https://github.com/williamboman/mason.nvim" },
+	{ src = "https://github.com/stevearc/conform.nvim" },
+	{ src = "https://github.com/stevearc/oil.nvim" },
+	{ src = "https://github.com/0x00-ketsu/autosave.nvim" },
+	{ src = "https://github.com/rafamadriz/friendly-snippets" },
+	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
+})
+
+vim.cmd.packadd("mason.nvim")
+require("mason").setup({
+	install_root_dir = vim.fn.expand("~/.local/share/nvim/mason"),
+})
+
+require("which-key").setup()
+require("telescope").setup()
+require("nvim-autopairs").setup()
+require("gitsigns").setup()
+
+vim.cmd.packadd("trouble.nvim")
+require("trouble").setup()
+
+vim.cmd.packadd("marks.nvim")
+require("marks").setup()
+
+vim.cmd.packadd("conform.nvim")
+require("conform").setup({
+	formatters_by_ft = {
+		lua = { "stylua" },
+		rust = { "rustfmt" },
+		go = { "gofmt" },
+		python = { "black" },
+		c = { "clang-format" },
+		cpp = { "clang-format" },
+		vue = { "prettierd", "prettier" },
+		javascript = { "prettierd", "prettier" },
+		typescript = { "prettierd", "prettier" },
+		markdown = { "prettierd", "prettier" },
+	},
+})
+
+vim.cmd.packadd("render-markdown.nvim")
+require("render-markdown").setup()
+
+vim.cmd.packadd("autosave.nvim")
+require("autosave").setup({
+	enabled = true,
+	execution_message = "",
+	events = { "InsertLeave", "TextChanged" },
+	conditions = {
+		exists = true,
+		filename_is_not = {},
+		filetype_is_not = {},
+		modifiable = true,
+	},
+})
+
+vim.cmd.packadd("oil.nvim")
+require("oil").setup()
+
+vim.cmd.packadd("nvim-treesitter")
+
+vim.cmd.packadd("nvim-tree.lua")
+require("nvim-tree").setup({
+	filters = {
+		custom = { "^\\.git$", ".*\\~$", ".*\\.swp$", ".*\\.swo$" },
+		exclude = {},
+	},
+})
+
+vim.cmd.packadd("friendly-snippets")
+vim.cmd.packadd("blink.cmp")
+require("blink.cmp").setup({
+	keymap = { preset = "enter" },
+	snippets = { preset = "default" },
+})
+
+vim.cmd.packadd("toggleterm.nvim")
+require("toggleterm").setup({
+	open_mapping = false,
+	direction = "float",
+	shade_terminals = false,
+	persist_size = false,
+	size = function(term)
+		if term.direction == "vertical" then return math.floor(vim.o.columns * 0.3) end
+		return 15
+	end,
+})
+
+require("bufferline").setup({
+	options = {
+		offsets = {
+			{
+				filetype = "NvimTree",
+				text = "",
+				highlight = "Directory",
+				separator = true,
+			},
+		},
+	},
+})
+
+require("lualine").setup({
+	options = {
+		icons_enabled = true,
+		component_separators = { left = "", right = "" },
+		section_separators = { left = "", right = "" },
+	},
+	extensions = { "nvim-tree" },
+	sections = {
+		lualine_c = {
+			{
+				"filename",
+				path = 1,
+			},
+		},
+		lualine_x = {
+			{
+				function()
+					local clients = vim.lsp.get_clients({ bufnr = 0 })
+					if #clients == 0 then
+						return ""
+					end
+					local names = {}
+					for _, client in ipairs(clients) do
+						names[#names + 1] = client.name
+					end
+					local label = table.concat(names, ",")
+					if #label > 16 then
+						label = label:sub(1, 14) .. ".."
+					end
+					return label
+				end,
+				color = { gui = "bold" },
+			},
+			"filetype",
+		},
+	},
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "c", "cpp", "go", "javascript", "lua", "python", "rust", "typescript", "zig", "markdown" },
+	callback = function(args)
+		pcall(vim.treesitter.start, args.buf)
+	end,
+})
+
+local ts_parsers = { "c", "cpp", "go", "javascript", "lua", "python", "rust", "typescript", "zig", "markdown" }
+local parser_dir = vim.fn.stdpath("data") .. "/site/parser"
+vim.api.nvim_create_autocmd("VimEnter", {
+	once = true,
+	callback = function()
+		for _, parser in ipairs(ts_parsers) do
+			if vim.fn.glob(parser_dir .. "/" .. parser .. ".so") == "" then
+				vim.cmd("silent TSInstall " .. parser)
+			end
+		end
+	end,
+})
