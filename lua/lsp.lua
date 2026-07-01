@@ -1,79 +1,39 @@
 vim.cmd.packadd("nvim-lspconfig")
 
 local map = vim.keymap.set
-local uv = vim.uv or vim.loop
-
-local signature_delay_ms = 500
 
 local on_attach = function(client, bufnr)
-	local signature_group = vim.api.nvim_create_augroup("mvim_lsp_signature_" .. bufnr, { clear = true })
-	local signature_timer = uv.new_timer()
-
-	local function stop_signature_timer()
-		if signature_timer then
-			signature_timer:stop()
-		end
-	end
-
-	local function schedule_signature_help()
-		stop_signature_timer()
-
-		signature_timer:start(
-			signature_delay_ms,
-			0,
-			vim.schedule_wrap(function()
-				if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_get_current_buf() == bufnr then
-					vim.lsp.buf.signature_help()
-				end
-			end)
-		)
-	end
-
-	-- Hover documentation on demand (like VS Code)
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_hover) then
 		map("n", "K", vim.lsp.buf.hover, {
 			buffer = bufnr,
-			desc = "Hover documentation",
+			desc = "hover documentation",
 		})
 	end
+end
 
-	-- Automatic signature help while typing
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_signatureHelp) then
-		vim.api.nvim_create_autocmd("CursorHoldI", {
-			group = signature_group,
-			buffer = bufnr,
-			callback = schedule_signature_help,
-		})
-	end
+local blink_ok, blink = pcall(require, "blink.cmp")
+local blink_capabilities = {}
 
-	vim.api.nvim_create_autocmd({ "CursorMovedI", "InsertLeave", "BufLeave", "WinLeave" }, {
-		group = signature_group,
-		buffer = bufnr,
-		callback = stop_signature_timer,
-	})
-
-	vim.api.nvim_create_autocmd("BufWipeout", {
-		group = signature_group,
-		buffer = bufnr,
-		callback = function()
-			stop_signature_timer()
-
-			if signature_timer and not signature_timer:is_closing() then
-				signature_timer:close()
-			end
-		end,
-	})
+if blink_ok and type(blink.get_lsp_capabilities) == "function" then
+	blink_capabilities = blink.get_lsp_capabilities()
 end
 
 local capabilities = vim.tbl_deep_extend(
 	"force",
 	vim.lsp.protocol.make_client_capabilities(),
-	require("blink.cmp").get_lsp_capabilities()
+	blink_capabilities
 )
 
 local server_configs = {
 	rust_analyzer = { filetypes = { "rust" } },
-	vtsls = { filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact" } },
+	vtsls = {
+		filetypes = {
+			"typescript",
+			"javascript",
+			"typescriptreact",
+			"javascriptreact",
+		},
+	},
 	pyright = { filetypes = { "python" } },
 	clangd = { filetypes = { "c", "cpp", "objc", "objcpp" } },
 	gopls = { filetypes = { "go", "gomod" } },

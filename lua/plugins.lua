@@ -1,50 +1,86 @@
-vim.pack.add({
-	{ src = "https://github.com/nvim-tree/nvim-web-devicons" },
-	{ src = "https://github.com/nvim-tree/nvim-tree.lua" },
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
-	{ src = "https://github.com/neovim/nvim-lspconfig" },
-	{ src = "https://github.com/folke/which-key.nvim" },
-	{ src = "https://github.com/folke/trouble.nvim" },
-	{ src = "https://github.com/chentoast/marks.nvim" },
-	{ src = "https://github.com/nvim-telescope/telescope.nvim" },
-	{ src = "https://github.com/nvim-lua/plenary.nvim" },
-	{ src = "https://github.com/blazkowolf/gruber-darker.nvim" },
-	{ src = "https://github.com/windwp/nvim-autopairs" },
-	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
-	{ src = "https://github.com/saghen/blink.cmp" },
-	{ src = "https://github.com/akinsho/bufferline.nvim" },
-	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
-	{ src = "https://github.com/akinsho/toggleterm.nvim" },
-	{ src = "https://github.com/mfussenegger/nvim-dap" },
-	{ src = "https://github.com/rcarriga/nvim-dap-ui" },
-	{ src = "https://github.com/nvim-neotest/nvim-nio" },
-	{ src = "https://github.com/rachartier/tiny-glimmer.nvim" },
-	{ src = "https://github.com/williamboman/mason.nvim" },
-	{ src = "https://github.com/stevearc/conform.nvim" },
-	{ src = "https://github.com/stevearc/oil.nvim" },
-	{ src = "https://github.com/0x00-ketsu/autosave.nvim" },
-	{ src = "https://github.com/rafamadriz/friendly-snippets" },
-	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
-})
+local function notify_plugin_error(name, err)
+	vim.schedule(function()
+		vim.notify(("Plugin setup failed for %s: %s"):format(name, err), vim.log.levels.ERROR)
+	end)
+end
 
-vim.cmd.packadd("mason.nvim")
-require("mason").setup({
+local function with_plugin(name, setup)
+	local ok, err = pcall(setup)
+	if not ok then
+		notify_plugin_error(name, err)
+	end
+end
+
+local function packadd(name)
+	pcall(vim.cmd.packadd, name)
+end
+
+local function add_repo(src)
+	local ok, err = pcall(vim.pack.add, { { src = src } })
+	if not ok then
+		notify_plugin_error(src, err)
+	end
+end
+
+local function setup_module(package_name, module_name, opts)
+	with_plugin(package_name, function()
+		if package_name then
+			packadd(package_name)
+		end
+
+		local ok, module = pcall(require, module_name)
+		if not ok then
+			error(module)
+		end
+
+		if type(module.setup) ~= "function" then
+			error(("module %s has no setup()"):format(module_name))
+		end
+
+		module.setup(opts or {})
+	end)
+end
+
+add_repo("https://github.com/nvim-tree/nvim-web-devicons")
+add_repo("https://github.com/nvim-tree/nvim-tree.lua")
+add_repo("https://github.com/nvim-treesitter/nvim-treesitter")
+add_repo("https://github.com/neovim/nvim-lspconfig")
+add_repo("https://github.com/folke/which-key.nvim")
+add_repo("https://github.com/folke/trouble.nvim")
+add_repo("https://github.com/chentoast/marks.nvim")
+add_repo("https://github.com/nvim-telescope/telescope.nvim")
+add_repo("https://github.com/nvim-lua/plenary.nvim")
+add_repo("https://github.com/blazkowolf/gruber-darker.nvim")
+add_repo("https://github.com/windwp/nvim-autopairs")
+add_repo("https://github.com/lewis6991/gitsigns.nvim")
+add_repo("https://github.com/saghen/blink.cmp")
+add_repo("https://github.com/lukas-reineke/indent-blankline.nvim")
+add_repo("https://github.com/akinsho/bufferline.nvim")
+add_repo("https://github.com/nvim-lualine/lualine.nvim")
+add_repo("https://github.com/akinsho/toggleterm.nvim")
+add_repo("https://github.com/mfussenegger/nvim-dap")
+add_repo("https://github.com/rcarriga/nvim-dap-ui")
+add_repo("https://github.com/nvim-neotest/nvim-nio")
+add_repo("https://github.com/rachartier/tiny-glimmer.nvim")
+add_repo("https://github.com/williamboman/mason.nvim")
+add_repo("https://github.com/stevearc/conform.nvim")
+add_repo("https://github.com/stevearc/oil.nvim")
+add_repo("https://github.com/0x00-ketsu/autosave.nvim")
+add_repo("https://github.com/rafamadriz/friendly-snippets")
+add_repo("https://github.com/MeanderingProgrammer/render-markdown.nvim")
+
+setup_module("mason.nvim", "mason", {
 	install_root_dir = vim.fn.expand("~/.local/share/nvim/mason"),
 })
 
-require("which-key").setup()
-require("telescope").setup()
-require("nvim-autopairs").setup()
-require("gitsigns").setup()
+setup_module("which-key.nvim", "which-key")
+setup_module("telescope.nvim", "telescope")
+setup_module("nvim-autopairs", "nvim-autopairs")
+setup_module("gitsigns.nvim", "gitsigns")
+setup_module("trouble.nvim", "trouble")
+setup_module("marks.nvim", "marks")
 
-vim.cmd.packadd("trouble.nvim")
-require("trouble").setup()
-
-vim.cmd.packadd("marks.nvim")
-require("marks").setup()
-
-vim.cmd.packadd("conform.nvim")
-require("conform").setup({
+setup_module("conform.nvim", "conform", {
 	formatters_by_ft = {
 		lua = { "stylua" },
 		rust = { "rustfmt" },
@@ -59,14 +95,9 @@ require("conform").setup({
 	},
 })
 
-vim.cmd.packadd("tiny-glimmer.nvim")
-require("tiny-glimmer").setup()
-
-vim.cmd.packadd("render-markdown.nvim")
-require("render-markdown").setup()
-
-vim.cmd.packadd("autosave.nvim")
-require("autosave").setup({
+setup_module("tiny-glimmer.nvim", "tiny-glimmer")
+setup_module("render-markdown.nvim", "render-markdown")
+setup_module("autosave.nvim", "autosave", {
 	enabled = true,
 	execution_message = "",
 	events = { "InsertLeave", "TextChanged" },
@@ -78,24 +109,21 @@ require("autosave").setup({
 	},
 })
 
-vim.cmd.packadd("oil.nvim")
-require("oil").setup()
+setup_module("oil.nvim", "oil")
+packadd("nvim-treesitter")
 
-vim.cmd.packadd("nvim-treesitter")
-
-vim.cmd.packadd("nvim-tree.lua")
-require("nvim-tree").setup({
+setup_module("nvim-tree.lua", "nvim-tree", {
 	filters = {
 		custom = { "^\\.git$", ".*\\~$", ".*\\.swp$", ".*\\.swo$" },
 		exclude = {},
 	},
 })
 
-vim.cmd.packadd("friendly-snippets")
-vim.cmd.packadd("blink.cmp")
-require("blink.cmp").setup({
+packadd("friendly-snippets")
+setup_module("blink.cmp", "blink.cmp", {
 	keymap = {
-		preset = "enter",
+		preset = "default",
+
 		["<Tab>"] = {
 			function(cmp)
 				if cmp.snippet_active({ direction = 1 }) then
@@ -106,6 +134,7 @@ require("blink.cmp").setup({
 			"select_next",
 			"fallback",
 		},
+
 		["<S-Tab>"] = {
 			function(cmp)
 				if cmp.snippet_active({ direction = -1 }) then
@@ -117,11 +146,61 @@ require("blink.cmp").setup({
 			"fallback",
 		},
 	},
-	snippets = { preset = "default" },
+
+	cmdline = {
+		enabled = true,
+	},
+
+	completion = {
+		menu = {
+			auto_show = true,
+		},
+	},
+
+	sources = {
+		default = {
+			"lsp",
+			"path",
+			"snippets",
+			"buffer",
+		},
+	},
+
+	snippets = {
+		preset = "default",
+	},
+
+	signature = {
+		enabled = true,
+		window = {
+			show_documentation = false,
+		},
+	},
 })
 
-vim.cmd.packadd("toggleterm.nvim")
-require("toggleterm").setup({
+setup_module("indent-blankline.nvim", "ibl", {
+	indent = {
+		char = "│",
+	},
+	scope = {
+		enabled = true,
+		show_start = false,
+		show_end = false,
+	},
+	exclude = {
+		filetypes = {
+			"help",
+			"dashboard",
+			"neo-tree",
+			"NvimTree",
+			"Trouble",
+			"lazy",
+			"toggleterm",
+		},
+	},
+})
+
+setup_module("toggleterm.nvim", "toggleterm", {
 	open_mapping = false,
 	direction = "float",
 	shade_terminals = false,
@@ -134,7 +213,7 @@ require("toggleterm").setup({
 	end,
 })
 
-require("bufferline").setup({
+setup_module("bufferline.nvim", "bufferline", {
 	options = {
 		offsets = {
 			{
@@ -147,7 +226,7 @@ require("bufferline").setup({
 	},
 })
 
-require("lualine").setup({
+setup_module("lualine.nvim", "lualine", {
 	options = {
 		icons_enabled = true,
 		theme = "auto",
