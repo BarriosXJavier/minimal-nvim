@@ -54,6 +54,7 @@ add_repo("https://github.com/blazkowolf/gruber-darker.nvim")
 add_repo("https://github.com/windwp/nvim-autopairs")
 add_repo("https://github.com/lewis6991/gitsigns.nvim")
 add_repo("https://github.com/saghen/blink.cmp")
+add_repo("https://github.com/onsails/lspkind.nvim")
 add_repo("https://github.com/lukas-reineke/indent-blankline.nvim")
 add_repo("https://github.com/akinsho/bufferline.nvim")
 add_repo("https://github.com/nvim-lualine/lualine.nvim")
@@ -120,6 +121,26 @@ setup_module("nvim-tree.lua", "nvim-tree", {
 })
 
 packadd("friendly-snippets")
+
+local function blink_kind_icon(ctx)
+	if ctx.source_name == "Path" then
+		local ok, devicons = pcall(require, "nvim-web-devicons")
+		if ok then
+			local icon, hl = devicons.get_icon(ctx.label, nil, { default = true })
+			if icon then
+				return icon .. ctx.icon_gap, hl
+			end
+		end
+	end
+
+	local ok, lspkind = pcall(require, "lspkind")
+	if ok then
+		return (lspkind.symbol_map[ctx.kind] or ctx.kind_icon) .. ctx.icon_gap, ctx.kind_hl
+	end
+
+	return ctx.kind_icon .. ctx.icon_gap, ctx.kind_hl
+end
+
 setup_module("blink.cmp", "blink.cmp", {
 	keymap = {
 		preset = "enter",
@@ -156,8 +177,29 @@ setup_module("blink.cmp", "blink.cmp", {
 	},
 
 	completion = {
+		list = {
+			selection = {
+				auto_insert = true,
+			},
+		},
 		menu = {
 			auto_show = true,
+			draw = {
+				columns = { { "kind_icon" }, { "label", "label_description", gap = 1 } },
+				components = {
+					kind_icon = {
+						ellipsis = false,
+						text = function(ctx)
+							local icon = blink_kind_icon(ctx)
+							return icon
+						end,
+						highlight = function(ctx)
+							local _, hl = blink_kind_icon(ctx)
+							return hl
+						end,
+					},
+				},
+			},
 		},
 	},
 
@@ -172,6 +214,9 @@ setup_module("blink.cmp", "blink.cmp", {
 
 	snippets = {
 		preset = "default",
+		expand = function(snippet)
+			vim.snippet.expand(snippet)
+		end,
 	},
 
 	signature = {

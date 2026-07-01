@@ -45,6 +45,7 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | Syntax highlighting |
 | [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) | LSP server defaults |
 | [blink.cmp](https://github.com/saghen/blink.cmp) | Autocompletion |
+| [lspkind.nvim](https://github.com/onsails/lspkind.nvim) | Completion kind icons |
 | [friendly-snippets](https://github.com/rafamadriz/friendly-snippets) | Snippet definitions |
 | [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) | File explorer |
 | [oil.nvim](https://github.com/stevearc/oil.nvim) | File explorer (buffer-based) |
