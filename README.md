@@ -151,8 +151,8 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | Key | Action |
 |-----|--------|
 | `<CR>` | Accept selected item |
-| `<Tab>` | Snippet forward |
-| `<S-Tab>` | Snippet backward |
+| `<Tab>` | Next completion item / snippet forward |
+| `<S-Tab>` | Previous completion item / snippet backward |
 
 ## LSP Servers
 

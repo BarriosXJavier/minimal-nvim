@@ -94,7 +94,29 @@ require("nvim-tree").setup({
 vim.cmd.packadd("friendly-snippets")
 vim.cmd.packadd("blink.cmp")
 require("blink.cmp").setup({
-	keymap = { preset = "enter" },
+	keymap = {
+		preset = "enter",
+		["<Tab>"] = {
+			function(cmp)
+				if cmp.snippet_active({ direction = 1 }) then
+					cmp.snippet_forward()
+					return true
+				end
+			end,
+			"select_next",
+			"fallback",
+		},
+		["<S-Tab>"] = {
+			function(cmp)
+				if cmp.snippet_active({ direction = -1 }) then
+					cmp.snippet_backward()
+					return true
+				end
+			end,
+			"select_prev",
+			"fallback",
+		},
+	},
 	snippets = { preset = "default" },
 })
 
