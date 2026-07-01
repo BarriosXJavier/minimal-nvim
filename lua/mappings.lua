@@ -5,6 +5,12 @@ map("i", "<C-j>", "<Down>", { desc = "Cursor down" })
 map("i", "<C-k>", "<Up>", { desc = "Cursor up" })
 map("i", "<C-l>", "<Right>", { desc = "Cursor right" })
 map("i", "jk", "<Esc>", { desc = "Exit insert mode" })
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", {desc = "Clear highlights"})
+
+map("n", "<C-c>", function()
+	vim.cmd("%y")
+	print("File copied to +register")
+end, { desc = "Copy whole file to clipboard" })
 
 map("n", ";", ":", { desc = "Command mode" })
 map("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })

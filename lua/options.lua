@@ -26,8 +26,7 @@ opt.mouse = "a"
 opt.guicursor = "n:block-blinkon0,i:block-blinkwait100-blinkon300-blinkoff200,r:block-blinkon0"
 opt.clipboard = "unnamedplus"
 
-opt.updatetime = 250
-
+vim.opt.updatetime = 1000
 opt.wrap = true
 opt.linebreak = true
 opt.breakindent = true
