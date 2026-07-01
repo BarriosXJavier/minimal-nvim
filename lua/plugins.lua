@@ -108,7 +108,7 @@ require("toggleterm").setup({
 		if term.direction == "vertical" then
 			return math.floor(vim.o.columns * 0.3)
 		end
-		return 15
+		return math.max(8, math.floor(vim.o.lines * 0.25))
 	end,
 })
 
@@ -143,6 +143,8 @@ require("lualine").setup({
 				"dashboard",
 				"neo-tree",
 				"NvimTree",
+				"toggleterm",
+				"terminal",
 				"Trouble",
 				"lazy",
 			},

@@ -55,28 +55,43 @@ local Terminal = require("toggleterm.terminal").Terminal
 local lazygit_term = Terminal:new({ cmd = "lazygit", direction = "float", hidden = true })
 local float_term = Terminal:new({ direction = "float", hidden = true })
 local vert_term = Terminal:new({ direction = "vertical", hidden = true })
-local horiz_term = Terminal:new({ direction = "horizontal", size = 15, hidden = true })
+local horiz_term = Terminal:new({
+	direction = "horizontal",
+	size = math.max(8, math.floor(vim.o.lines * 0.25)),
+	hidden = true,
+})
+
+local function close_terms(terms)
+	for _, term in ipairs(terms) do
+		term:close()
+	end
+end
+
+local function toggle_exclusive(term, others)
+	close_terms(others)
+	term:toggle()
+end
 
 map("n", "<leader>lg", function()
-	lazygit_term:toggle()
+	toggle_exclusive(lazygit_term, { float_term, vert_term, horiz_term })
 end, { desc = "Toggle lazygit" })
 map("n", "<A-i>", function()
-	float_term:toggle()
+	toggle_exclusive(float_term, { lazygit_term, vert_term, horiz_term })
 end, { desc = "Toggle floating terminal" })
 map("n", "<A-v>", function()
-	vert_term:toggle()
+	toggle_exclusive(vert_term, { lazygit_term, float_term, horiz_term })
 end, { desc = "Toggle vertical terminal" })
 map("n", "<A-h>", function()
-	horiz_term:toggle()
+	toggle_exclusive(horiz_term, { lazygit_term, float_term, vert_term })
 end, { desc = "Toggle horizontal terminal" })
 map("t", "<A-i>", function()
-	float_term:toggle()
+	toggle_exclusive(float_term, { lazygit_term, vert_term, horiz_term })
 end, { desc = "Toggle floating terminal" })
 map("t", "<A-v>", function()
-	vert_term:toggle()
+	toggle_exclusive(vert_term, { lazygit_term, float_term, horiz_term })
 end, { desc = "Toggle vertical terminal" })
 map("t", "<A-h>", function()
-	horiz_term:toggle()
+	toggle_exclusive(horiz_term, { lazygit_term, float_term, vert_term })
 end, { desc = "Toggle horizontal terminal" })
 
 local dap = require("dap")
