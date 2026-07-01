@@ -183,7 +183,9 @@ Shares the Mason install directory with NvChad at `~/.local/share/nvim/mason` to
 
 ## Treesitter
 
-Parsers are auto-installed on first launch via `TSInstall` for: `c`, `cpp`, `go`, `javascript`, `lua`, `python`, `rust`, `typescript`, `zig`.
+Treesitter is enabled for: `c`, `cpp`, `go`, `javascript`, `lua`, `python`, `rust`, `typescript`, `zig`, `markdown`.
+
+Install parsers manually with `:TSInstall` when needed.
 
 - Preferred **native Neovim APIs** over external plugins where possible (`vim.pack`, `vim.lsp.config`, `vim.snippet`, `vim.diagnostic.jump`)
 - All keymaps in one file (`lua/mappings.lua`)

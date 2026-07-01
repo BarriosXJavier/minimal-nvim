@@ -215,16 +215,3 @@ vim.api.nvim_create_autocmd("FileType", {
 		pcall(vim.treesitter.start, args.buf)
 	end,
 })
-
-local ts_parsers = { "c", "cpp", "go", "javascript", "lua", "python", "rust", "typescript", "zig", "markdown" }
-local parser_dir = vim.fn.stdpath("data") .. "/site/parser"
-vim.api.nvim_create_autocmd("VimEnter", {
-	once = true,
-	callback = function()
-		for _, parser in ipairs(ts_parsers) do
-			if vim.fn.glob(parser_dir .. "/" .. parser .. ".so") == "" then
-				vim.cmd("silent TSInstall " .. parser)
-			end
-		end
-	end,
-})
