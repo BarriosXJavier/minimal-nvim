@@ -18,7 +18,6 @@ vim.pack.add({
 	{ src = "https://github.com/mfussenegger/nvim-dap" },
 	{ src = "https://github.com/rcarriga/nvim-dap-ui" },
 	{ src = "https://github.com/nvim-neotest/nvim-nio" },
-	{ src = "https://github.com/rachartier/tiny-code-action.nvim" },
 	{ src = "https://github.com/rachartier/tiny-glimmer.nvim" },
 	{ src = "https://github.com/williamboman/mason.nvim" },
 	{ src = "https://github.com/stevearc/conform.nvim" },
@@ -58,11 +57,6 @@ require("conform").setup({
 		typescript = { "prettierd", "prettier" },
 		markdown = { "prettierd", "prettier" },
 	},
-})
-
-vim.cmd.packadd("tiny-code-action.nvim")
-require("tiny-code-action").setup({
-	picker = "telescope",
 })
 
 vim.cmd.packadd("tiny-glimmer.nvim")
@@ -111,7 +105,9 @@ require("toggleterm").setup({
 	shade_terminals = false,
 	persist_size = false,
 	size = function(term)
-		if term.direction == "vertical" then return math.floor(vim.o.columns * 0.3) end
+		if term.direction == "vertical" then
+			return math.floor(vim.o.columns * 0.3)
+		end
 		return 15
 	end,
 })
@@ -132,15 +128,59 @@ require("bufferline").setup({
 require("lualine").setup({
 	options = {
 		icons_enabled = true,
-		component_separators = { left = "", right = "" },
-		section_separators = { left = "", right = "" },
+		theme = "auto",
+		component_separators = { left = "│", right = "│" },
+		section_separators = { left = "", right = "" },
+		globalstatus = true,
+		refresh = {
+			statusline = 1000,
+			tabline = 1000,
+			winbar = 1000,
+		},
+		disabled_filetypes = {
+			statusline = {
+				"alpha",
+				"dashboard",
+				"neo-tree",
+				"NvimTree",
+				"Trouble",
+				"lazy",
+			},
+		},
 	},
 	extensions = { "nvim-tree" },
 	sections = {
+		lualine_a = {
+			{
+				"mode",
+				padding = { left = 1, right = 1 },
+				color = { gui = "bold" },
+			},
+		},
+		lualine_b = {
+			{
+				"branch",
+				icon = "󰘬",
+			},
+			"diff",
+			"diagnostics",
+		},
 		lualine_c = {
 			{
 				"filename",
 				path = 1,
+				symbols = {
+					modified = " [+]",
+					readonly = " [RO]",
+					unnamed = "[No Name]",
+					newfile = "[New]",
+				},
+			},
+		},
+		lualine_y = {
+			{
+				"progress",
+				padding = { left = 1, right = 1 },
 			},
 		},
 		lualine_x = {
@@ -163,6 +203,8 @@ require("lualine").setup({
 				color = { gui = "bold" },
 			},
 			"filetype",
+			"encoding",
+			"fileformat",
 		},
 	},
 })

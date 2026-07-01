@@ -88,6 +88,10 @@
       "rev": "427b576c16792edad01a92b89721d923c19ad60f",
       "src": "https://github.com/nvim-telescope/telescope.nvim"
     },
+    "tiny-glimmer.nvim": {
+      "rev": "f26728abf811324d7ed6b035a11d7b76a27c06c3",
+      "src": "https://github.com/rachartier/tiny-glimmer.nvim"
+    },
     "toggleterm.nvim": {
       "rev": "9a88eae817ef395952e08650b3283726786fb5fb",
       "src": "https://github.com/akinsho/toggleterm.nvim"

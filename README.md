@@ -54,7 +54,6 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | [trouble.nvim](https://github.com/folke/trouble.nvim) | Diagnostics/references list |
 | [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) | Fuzzy finder |
 | [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) | Utility library (dep of telescope) |
-| [tiny-code-action.nvim](https://github.com/rachartier/tiny-code-action.nvim) | Code actions popup |
 | [tiny-glimmer.nvim](https://github.com/rachartier/tiny-glimmer.nvim) | Text motion animations |
 | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | Git decorations |
 | [marks.nvim](https://github.com/chentoast/marks.nvim) | Better mark management |
@@ -117,7 +116,7 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | `gi` | Go to implementation |
 | `gr` | Go to references |
 | `<leader>rn` | Rename symbol |
-| `<leader>ca` | Tiny code action |
+| `gra` | Code action |
 | `[d` | Previous diagnostic |
 | `]d` | Next diagnostic |
 | `<leader>d` | Open diagnostic float |
