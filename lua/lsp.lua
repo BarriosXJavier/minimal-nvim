@@ -4,6 +4,7 @@ local map = vim.keymap.set
 
 local on_attach = function(client, bufnr)
     local opts = { buffer = bufnr }
+    local popup_group = vim.api.nvim_create_augroup("mvim_lsp_popups_" .. bufnr, { clear = true })
     map("n", "gd", vim.lsp.buf.definition, opts)
     map("n", "K", vim.lsp.buf.hover, opts)
     map("n", "gi", vim.lsp.buf.implementation, opts)
@@ -13,6 +14,26 @@ local on_attach = function(client, bufnr)
     map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, opts)
     map("n", "<leader>d", vim.diagnostic.open_float, opts)
     map("n", "<leader>q", vim.diagnostic.setloclist, opts)
+
+    if client:supports_method(vim.lsp.protocol.Methods.textDocument_hover, bufnr) then
+        vim.api.nvim_create_autocmd("CursorHold", {
+            group = popup_group,
+            buffer = bufnr,
+            callback = function()
+                vim.lsp.buf.hover()
+            end,
+        })
+    end
+
+    if client:supports_method(vim.lsp.protocol.Methods.textDocument_signatureHelp, bufnr) then
+        vim.api.nvim_create_autocmd("CursorHoldI", {
+            group = popup_group,
+            buffer = bufnr,
+            callback = function()
+                vim.lsp.buf.signature_help()
+            end,
+        })
+    end
 end
 
 local capabilities = vim.tbl_deep_extend(

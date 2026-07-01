@@ -123,6 +123,8 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | `<leader>d` | Open diagnostic float |
 | `<leader>q` | Diagnostic loclist |
 
+Hover docs open automatically on idle in normal mode, and signature help opens automatically while typing in insert mode.
+
 ### Terminal (toggleterm)
 
 | Key | Action |
