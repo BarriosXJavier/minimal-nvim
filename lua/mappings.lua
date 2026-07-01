@@ -21,6 +21,7 @@ map("n", "<leader>xL", "<cmd>Trouble loclist toggle<cr>", { desc = "Trouble loca
 map("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", { desc = "Trouble quickfix list" })
 
 map("n", "<leader>e", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle file tree" })
+map("n", "<C-n>", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle file tree" })
 map("n", "<leader>o", "<cmd>Oil<cr>", { desc = "Open oil explorer" })
 map("n", "<leader>x", "<cmd>bd<cr>", { desc = "Close buffer" })
 

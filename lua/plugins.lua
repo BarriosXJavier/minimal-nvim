@@ -163,6 +163,7 @@ require("lualine").setup({
 			statusline = {
 				"alpha",
 				"dashboard",
+				"oil",
 				"neo-tree",
 				"NvimTree",
 				"toggleterm",

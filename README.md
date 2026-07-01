@@ -101,6 +101,7 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | `<leader>xL` | Trouble location list |
 | `<leader>xQ` | Trouble quickfix list |
 | `<leader>e` | Toggle nvim-tree |
+| `<C-n>` | Toggle nvim-tree |
 | `<leader>o` | Open oil.nvim |
 | `<leader>x` | Close buffer |
 | `<Tab>` | Next buffer |
