@@ -18,6 +18,8 @@ vim.pack.add({
 	{ src = "https://github.com/mfussenegger/nvim-dap" },
 	{ src = "https://github.com/rcarriga/nvim-dap-ui" },
 	{ src = "https://github.com/nvim-neotest/nvim-nio" },
+	{ src = "https://github.com/rachartier/tiny-code-action.nvim" },
+	{ src = "https://github.com/rachartier/tiny-glimmer.nvim" },
 	{ src = "https://github.com/williamboman/mason.nvim" },
 	{ src = "https://github.com/stevearc/conform.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
@@ -57,6 +59,14 @@ require("conform").setup({
 		markdown = { "prettierd", "prettier" },
 	},
 })
+
+vim.cmd.packadd("tiny-code-action.nvim")
+require("tiny-code-action").setup({
+	picker = "telescope",
+})
+
+vim.cmd.packadd("tiny-glimmer.nvim")
+require("tiny-glimmer").setup()
 
 vim.cmd.packadd("render-markdown.nvim")
 require("render-markdown").setup()

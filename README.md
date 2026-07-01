@@ -54,6 +54,8 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | [trouble.nvim](https://github.com/folke/trouble.nvim) | Diagnostics/references list |
 | [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) | Fuzzy finder |
 | [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) | Utility library (dep of telescope) |
+| [tiny-code-action.nvim](https://github.com/rachartier/tiny-code-action.nvim) | Code actions popup |
+| [tiny-glimmer.nvim](https://github.com/rachartier/tiny-glimmer.nvim) | Text motion animations |
 | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | Git decorations |
 | [marks.nvim](https://github.com/chentoast/marks.nvim) | Better mark management |
 | [nvim-autopairs](https://github.com/windwp/nvim-autopairs) | Auto-close brackets |
@@ -84,7 +86,21 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | `;` | Enter command mode |
 | `<C-s>` | Save file |
 | `<leader>fm` | Format buffer (conform) |
-| `<leader>xx` | Toggle trouble diagnostics list |
+| `<leader>ff` | Find files |
+| `<leader>fr` | Find recent files |
+| `<leader>fg` | Live grep |
+| `<leader>fw` | Find word under cursor |
+| `<leader>fb` | Find buffers |
+| `<leader>fh` | Find help tags |
+| `<leader>fk` | Find keymaps |
+| `<leader>fd` | Find diagnostics |
+| `<leader>fc` | Find in current buffer |
+| `<leader>xx` | Trouble diagnostics |
+| `<leader>xX` | Trouble buffer diagnostics |
+| `<leader>xs` | Trouble symbols |
+| `<leader>xl` | Trouble LSP |
+| `<leader>xL` | Trouble location list |
+| `<leader>xQ` | Trouble quickfix list |
 | `<leader>e` | Toggle nvim-tree |
 | `<leader>o` | Open oil.nvim |
 | `<leader>x` | Close buffer |
@@ -101,7 +117,7 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | `gi` | Go to implementation |
 | `gr` | Go to references |
 | `<leader>rn` | Rename symbol |
-| `<leader>ca` | Code action |
+| `<leader>ca` | Tiny code action |
 | `[d` | Previous diagnostic |
 | `]d` | Next diagnostic |
 | `<leader>d` | Open diagnostic float |
