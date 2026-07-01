@@ -122,7 +122,11 @@ setup_module("nvim-tree.lua", "nvim-tree", {
 packadd("friendly-snippets")
 setup_module("blink.cmp", "blink.cmp", {
 	keymap = {
-		preset = "default",
+		preset = "enter",
+		["<CR>"] = {
+			"select_and_accept",
+			"fallback",
+		},
 
 		["<Tab>"] = {
 			function(cmp)
