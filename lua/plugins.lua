@@ -200,6 +200,8 @@ setup_module("blink.cmp", "blink.cmp", {
 					},
 				},
 			},
+
+			border = "rounded",
 		},
 	},
 
@@ -222,7 +224,8 @@ setup_module("blink.cmp", "blink.cmp", {
 	signature = {
 		enabled = true,
 		window = {
-			show_documentation = false,
+			show_documentation = true,
+			border = "rounded",
 		},
 	},
 })

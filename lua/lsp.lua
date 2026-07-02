@@ -18,11 +18,7 @@ if blink_ok and type(blink.get_lsp_capabilities) == "function" then
 	blink_capabilities = blink.get_lsp_capabilities()
 end
 
-local capabilities = vim.tbl_deep_extend(
-	"force",
-	vim.lsp.protocol.make_client_capabilities(),
-	blink_capabilities
-)
+local capabilities = vim.tbl_deep_extend("force", vim.lsp.protocol.make_client_capabilities(), blink_capabilities)
 
 local server_configs = {
 	rust_analyzer = { filetypes = { "rust" } },
