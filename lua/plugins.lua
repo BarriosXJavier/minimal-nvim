@@ -69,6 +69,7 @@ add_repo("https://github.com/stevearc/oil.nvim")
 add_repo("https://github.com/0x00-ketsu/autosave.nvim")
 add_repo("https://github.com/rafamadriz/friendly-snippets")
 add_repo("https://github.com/MeanderingProgrammer/render-markdown.nvim")
+add_repo("folke/zen-mode.nvim")
 
 setup_module("mason.nvim", "mason", {
 	install_root_dir = vim.fn.expand("~/.local/share/nvim/mason"),
