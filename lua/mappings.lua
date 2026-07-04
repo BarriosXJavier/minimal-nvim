@@ -15,6 +15,8 @@ end, { desc = "Copy whole file to clipboard" })
 map("n", ";", ":", { desc = "Command mode" })
 map("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
 
+map("n", "<leader>z", "<cmd>ZenMode<cr>", {desc = "Toggle Mode"})
+
 map("n", "<leader>fm", function()
 	require("conform").format({ stop_after_first = true, lsp_fallback = true })
 end, { desc = "Format buffer" })
