@@ -13,7 +13,8 @@ opt.smartindent = true
 opt.swapfile = false
 opt.ignorecase = true
 opt.smartcase = true
-
+opt.undofile = true
+opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 opt.termguicolors = true
 opt.signcolumn = "yes"
 opt.cursorline = true
@@ -32,11 +33,11 @@ opt.linebreak = true
 opt.breakindent = true
 opt.textwidth = 0
 
-vim.diagnostic.config {
-    virtual_text = true,
-    signs = true,
-    update_in_insert = false,
-}
+vim.diagnostic.config({
+	virtual_text = true,
+	signs = true,
+	update_in_insert = false,
+})
 
 vim.cmd.packadd("gruber-darker.nvim")
 vim.cmd("colorscheme gruber-darker")
