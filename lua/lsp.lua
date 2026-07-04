@@ -22,7 +22,8 @@ local capabilities = vim.tbl_deep_extend("force", vim.lsp.protocol.make_client_c
 
 local server_configs = {
 	rust_analyzer = { filetypes = { "rust" } },
-	vtsls = {
+
+    vtsls = {
 		filetypes = {
 			"typescript",
 			"javascript",
@@ -30,11 +31,16 @@ local server_configs = {
 			"javascriptreact",
 		},
 	},
-	pyright = { filetypes = { "python" } },
-	clangd = { filetypes = { "c", "cpp", "objc", "objcpp" } },
-	gopls = { filetypes = { "go", "gomod" } },
-	zls = { filetypes = { "zig" } },
-	lua_ls = {
+	
+    pyright = { filetypes = { "python" } },
+	
+    clangd = { filetypes = { "c", "cpp", "objc", "objcpp" } },
+	
+    gopls = { filetypes = { "go", "gomod" } },
+	
+    zls = { filetypes = { "zig" } },
+	
+    lua_ls = {
 		cmd = { "lua-language-server" },
 		filetypes = { "lua" },
 	},
@@ -43,6 +49,10 @@ local server_configs = {
 		filetypes = { "sh", "zsh" },
 	},
 	marksman = { filetypes = { "markdown" } },
+
+    cssls = {
+        filetypes = { "css", "scss", "less" },
+    },
 }
 
 for server, config in pairs(server_configs) do
@@ -51,7 +61,6 @@ for server, config in pairs(server_configs) do
 		capabilities = capabilities,
 		filetypes = config.filetypes,
 	}
-
 	if config.cmd then
 		vim.lsp.config[server].cmd = config.cmd
 	end
