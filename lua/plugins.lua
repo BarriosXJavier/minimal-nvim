@@ -101,6 +101,11 @@ setup_module("conform.nvim", "conform", {
 		typescript = { "prettierd", "prettier" },
 		markdown = { "prettierd", "prettier" },
 	},
+
+	format_on_save = {
+		timeout_ms = 500,
+		lsp_fallback = true,
+	},
 })
 
 setup_module("tiny-glimmer.nvim", "tiny-glimmer")

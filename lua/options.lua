@@ -19,7 +19,7 @@ opt.termguicolors = true
 opt.signcolumn = "yes"
 opt.cursorline = true
 opt.scrolloff = 8
-opt.sidescrolloff = 8
+opt.sidescrolloff = 4
 opt.splitbelow = true
 opt.splitright = true
 
