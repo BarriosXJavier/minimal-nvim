@@ -30,6 +30,8 @@ local server_configs = {
 		},
 	},
 
+    emmet_language_server = {},
+
 	tailwindcss = {},
 
 	html = {},
