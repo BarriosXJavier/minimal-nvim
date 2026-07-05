@@ -6,24 +6,22 @@ local on_attach = function(client, bufnr)
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_hover) then
 		map("n", "K", vim.lsp.buf.hover, {
 			buffer = bufnr,
-			desc = "hover documentation",
+			desc = "Hover documentation",
 		})
 	end
 end
 
-local blink_ok, blink = pcall(require, "blink.cmp")
-local blink_capabilities = {}
+local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+local blink_ok, blink = pcall(require, "blink.cmp")
 if blink_ok and type(blink.get_lsp_capabilities) == "function" then
-	blink_capabilities = blink.get_lsp_capabilities()
+	capabilities = vim.tbl_deep_extend("force", capabilities, blink.get_lsp_capabilities())
 end
 
-local capabilities = vim.tbl_deep_extend("force", vim.lsp.protocol.make_client_capabilities(), blink_capabilities)
-
 local server_configs = {
-	rust_analyzer = { filetypes = { "rust" } },
+	rust_analyzer = {},
 
-    vtsls = {
+	vtsls = {
 		filetypes = {
 			"typescript",
 			"javascript",
@@ -31,39 +29,47 @@ local server_configs = {
 			"javascriptreact",
 		},
 	},
-	
-    pyright = { filetypes = { "python" } },
-	
-    clangd = { filetypes = { "c", "cpp", "objc", "objcpp" } },
-	
-    gopls = { filetypes = { "go", "gomod" } },
-	
-    zls = { filetypes = { "zig" } },
-	
-    lua_ls = {
+
+	tailwindcss = {},
+
+	html = {},
+
+	cssls = {
+		filetypes = { "css", "scss", "less" },
+	},
+
+	pyright = {},
+
+	clangd = {
+		filetypes = { "c", "cpp", "objc", "objcpp" },
+	},
+
+	gopls = {
+		filetypes = { "go", "gomod" },
+	},
+
+	zls = {},
+
+	lua_ls = {
 		cmd = { "lua-language-server" },
 		filetypes = { "lua" },
 	},
+
 	bashls = {
 		cmd = { "bash-language-server" },
 		filetypes = { "sh", "zsh" },
 	},
-	marksman = { filetypes = { "markdown" } },
 
-    cssls = {
-        filetypes = { "css", "scss", "less" },
-    },
+	marksman = {
+		filetypes = { "markdown" },
+	},
 }
 
 for server, config in pairs(server_configs) do
-	vim.lsp.config[server] = {
+	vim.lsp.config[server] = vim.tbl_deep_extend("force", {
 		on_attach = on_attach,
 		capabilities = capabilities,
-		filetypes = config.filetypes,
-	}
-	if config.cmd then
-		vim.lsp.config[server].cmd = config.cmd
-	end
+	}, config)
 
 	vim.lsp.enable(server)
 end

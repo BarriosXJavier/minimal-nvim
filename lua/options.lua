@@ -18,7 +18,8 @@ opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 opt.termguicolors = true
 opt.signcolumn = "yes"
 opt.cursorline = true
-
+opt.scrolloff = 8
+opt.sidescrolloff = 8
 opt.splitbelow = true
 opt.splitright = true
 
