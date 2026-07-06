@@ -129,7 +129,7 @@ setup_module("render-markdown.nvim", "render-markdown")
 setup_module("autosave.nvim", "autosave", {
 	enabled = true,
 	execution_message = "",
-	events = { "InsertLeave", "TextChanged" },
+	events = { "InsertLeave" },
 	conditions = {
 		exists = true,
 		filename_is_not = {},
