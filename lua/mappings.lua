@@ -31,7 +31,6 @@ map("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", { desc = "Trouble quick
 map("n", "<leader>e", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle file tree" })
 map("n", "<C-n>", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle file tree" })
 map("n", "<leader>o", "<cmd>Oil<cr>", { desc = "Open oil explorer" })
-map("n", "<leader>x", "<cmd>bd<cr>", { desc = "Close buffer" })
 
 map("n", "<Tab>", "<cmd>bnext<cr>", { desc = "Next buffer" })
 map("n", "<S-Tab>", "<cmd>bprev<cr>", { desc = "Prev buffer" })

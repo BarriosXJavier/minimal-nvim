@@ -67,6 +67,9 @@ local repos = {
 	"https://github.com/rafamadriz/friendly-snippets",
 	"https://github.com/MeanderingProgrammer/render-markdown.nvim",
 	"https://github.com/folke/zen-mode.nvim",
+	"https://github.com/tpope/vim-dadbod",
+	"https://github.com/kristijanhusak/vim-dadbod-ui",
+	"https://github.com/kristijanhusak/vim-dadbod-completion",
 }
 
 for _, repo in ipairs(repos) do
@@ -96,16 +99,27 @@ setup_module("conform.nvim", "conform", {
 		python = { "black" },
 		c = { "clang-format" },
 		cpp = { "clang-format" },
-		vue = { "prettierd", "prettier" },
+
+		sql = { "sleek" },
+
 		javascript = { "prettierd", "prettier" },
 		typescript = { "prettierd", "prettier" },
-		markdown = { "prettierd", "prettier" },
-	},
+		javascriptreact = { "prettierd", "prettier" },
+		typescriptreact = { "prettierd", "prettier" },
 
-	format_on_save = {
-		timeout_ms = 500,
-		lsp_fallback = true,
+		html = { "prettierd", "prettier" },
+		css = { "prettierd", "prettier" },
+		scss = { "prettierd", "prettier" },
+		json = { "prettierd", "prettier" },
+		yaml = { "prettierd", "prettier" },
+		markdown = { "prettierd", "prettier" },
+
+		vue = { "prettierd", "prettier" },
 	},
+	-- format_on_save = {
+	-- 	timeout_ms = 2500,
+	-- 	lsp_fallback = true,
+	-- },
 })
 
 setup_module("tiny-glimmer.nvim", "tiny-glimmer")

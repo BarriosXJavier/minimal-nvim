@@ -30,7 +30,7 @@ local server_configs = {
 		},
 	},
 
-    emmet_language_server = {},
+	emmet_language_server = {},
 
 	tailwindcss = {},
 
@@ -65,6 +65,10 @@ local server_configs = {
 	marksman = {
 		filetypes = { "markdown" },
 	},
+
+	sqls = {},
+
+	prisma = {},
 }
 
 for server, config in pairs(server_configs) do
