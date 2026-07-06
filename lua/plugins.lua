@@ -116,10 +116,10 @@ setup_module("conform.nvim", "conform", {
 
 		vue = { "prettierd", "prettier" },
 	},
-	-- format_on_save = {
-	-- 	timeout_ms = 2500,
-	-- 	lsp_fallback = true,
-	-- },
+	format_on_save = {
+		timeout_ms = 1500,
+		lsp_fallback = true,
+	},
 })
 
 setup_module("tiny-glimmer.nvim", "tiny-glimmer")
@@ -221,6 +221,17 @@ setup_module("blink.cmp", "blink.cmp", {
 	},
 
 	completion = {
+		documentation = {
+			auto_show = true,
+			auto_show_delay_ms = 500,
+			window = {
+				border = "rounded",
+				direction_priority = {
+					menu_north = { "e", "w" },
+					menu_south = { "e", "w" },
+				},
+			},
+		},
 		list = {
 			selection = {
 				auto_insert = true,
