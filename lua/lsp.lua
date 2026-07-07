@@ -69,6 +69,10 @@ local server_configs = {
 	sqls = {},
 
 	prisma = {},
+
+	taplo = {
+		filetypes = { "toml" },
+	},
 }
 
 for server, config in pairs(server_configs) do

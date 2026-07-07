@@ -188,6 +188,8 @@ setup_module("blink.cmp", "blink.cmp", {
 	keymap = {
 		preset = "enter",
 
+		["<C-k>"] = false,
+
 		["<CR>"] = {
 			"select_and_accept",
 			"fallback",
