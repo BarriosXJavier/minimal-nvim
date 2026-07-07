@@ -1,40 +1,9 @@
-local function notify_plugin_error(name, err)
-	vim.schedule(function()
-		vim.notify(("Plugin setup failed for %s: %s"):format(name, err), vim.log.levels.ERROR)
-	end)
-end
-
-local function with_plugin(name, fn)
-	local ok, err = pcall(fn)
-	if not ok then
-		notify_plugin_error(name, err)
-	end
-end
-
-local function packadd(name)
-	pcall(vim.cmd.packadd, name)
-end
-
-local function add_repo(src)
-	with_plugin(src, function()
-		vim.pack.add({
-			{ src = src },
-		})
-	end)
-end
-
-local function setup_module(package_name, module_name, opts)
-	with_plugin(package_name, function()
-		if package_name then
-			packadd(package_name)
-		end
-
-		require(module_name).setup(opts or {})
-	end)
-end
+local util = require("util")
 
 --------------------------------------------------------------------------------
 -- Plugin repositories
+-- vim.pack.add() installs missing plugins and pins exact revisions in
+-- nvim-pack-lock.json (in this config dir). Commit that file to git it is the lockfile so no manual cloning needed.
 --------------------------------------------------------------------------------
 
 local repos = {
@@ -73,25 +42,27 @@ local repos = {
 }
 
 for _, repo in ipairs(repos) do
-	add_repo(repo)
+	util.with_plugin(repo, function()
+		vim.pack.add({ { src = repo } })
+	end)
 end
 
 --------------------------------------------------------------------------------
 -- Plugin setup
 --------------------------------------------------------------------------------
 
-setup_module("mason.nvim", "mason", {
+util.setup_module("mason.nvim", "mason", {
 	install_root_dir = vim.fn.expand("~/.local/share/nvim/mason"),
 })
 
-setup_module("which-key.nvim", "which-key")
-setup_module("telescope.nvim", "telescope")
-setup_module("nvim-autopairs", "nvim-autopairs")
-setup_module("gitsigns.nvim", "gitsigns")
-setup_module("trouble.nvim", "trouble")
-setup_module("marks.nvim", "marks")
+util.setup_module("which-key.nvim", "which-key")
+util.setup_module("telescope.nvim", "telescope")
+util.setup_module("nvim-autopairs", "nvim-autopairs")
+util.setup_module("gitsigns.nvim", "gitsigns")
+util.setup_module("trouble.nvim", "trouble")
+util.setup_module("marks.nvim", "marks")
 
-setup_module("conform.nvim", "conform", {
+util.setup_module("conform.nvim", "conform", {
 	formatters_by_ft = {
 		lua = { "stylua" },
 		rust = { "rustfmt" },
@@ -122,11 +93,10 @@ setup_module("conform.nvim", "conform", {
 	},
 })
 
-setup_module("tiny-glimmer.nvim", "tiny-glimmer")
+util.setup_module("tiny-glimmer.nvim", "tiny-glimmer")
+util.setup_module("render-markdown.nvim", "render-markdown")
 
-setup_module("render-markdown.nvim", "render-markdown")
-
-setup_module("autosave.nvim", "autosave", {
+util.setup_module("autosave.nvim", "autosave", {
 	enabled = true,
 	execution_message = "",
 	events = { "InsertLeave" },
@@ -138,11 +108,11 @@ setup_module("autosave.nvim", "autosave", {
 	},
 })
 
-setup_module("oil.nvim", "oil")
+util.setup_module("oil.nvim", "oil")
 
-packadd("nvim-treesitter")
+util.packadd("nvim-treesitter")
 
-setup_module("nvim-tree.lua", "nvim-tree", {
+util.setup_module("nvim-tree.lua", "nvim-tree", {
 	filters = {
 		custom = {
 			"^\\.git$",
@@ -154,10 +124,10 @@ setup_module("nvim-tree.lua", "nvim-tree", {
 	},
 })
 
-packadd("friendly-snippets")
+util.packadd("friendly-snippets")
 
 --------------------------------------------------------------------------------
--- blink.cmp helpers
+-- blink.cmp
 --------------------------------------------------------------------------------
 
 local function blink_kind_icon(ctx)
@@ -165,7 +135,6 @@ local function blink_kind_icon(ctx)
 		local ok, devicons = pcall(require, "nvim-web-devicons")
 		if ok then
 			local icon, hl = devicons.get_icon(ctx.label, nil, { default = true })
-
 			if icon then
 				return icon .. ctx.icon_gap, hl
 			end
@@ -180,11 +149,7 @@ local function blink_kind_icon(ctx)
 	return ctx.kind_icon .. ctx.icon_gap, ctx.kind_hl
 end
 
---------------------------------------------------------------------------------
--- blink.cmp
---------------------------------------------------------------------------------
-
-setup_module("blink.cmp", "blink.cmp", {
+util.setup_module("blink.cmp", "blink.cmp", {
 	keymap = {
 		preset = "enter",
 
@@ -300,7 +265,7 @@ setup_module("blink.cmp", "blink.cmp", {
 -- indent-blankline
 --------------------------------------------------------------------------------
 
-setup_module("indent-blankline.nvim", "ibl", {
+util.setup_module("indent-blankline.nvim", "ibl", {
 	indent = {
 		char = "│",
 	},
@@ -328,7 +293,7 @@ setup_module("indent-blankline.nvim", "ibl", {
 -- toggleterm
 --------------------------------------------------------------------------------
 
-setup_module("toggleterm.nvim", "toggleterm", {
+util.setup_module("toggleterm.nvim", "toggleterm", {
 	open_mapping = false,
 	direction = "float",
 	shade_terminals = false,
@@ -347,7 +312,7 @@ setup_module("toggleterm.nvim", "toggleterm", {
 -- bufferline
 --------------------------------------------------------------------------------
 
-setup_module("bufferline.nvim", "bufferline", {
+util.setup_module("bufferline.nvim", "bufferline", {
 	options = {
 		offsets = {
 			{
@@ -364,7 +329,7 @@ setup_module("bufferline.nvim", "bufferline", {
 -- lualine
 --------------------------------------------------------------------------------
 
-setup_module("lualine.nvim", "lualine", {
+util.setup_module("lualine.nvim", "lualine", {
 	options = {
 		icons_enabled = true,
 		theme = "auto",
@@ -375,8 +340,8 @@ setup_module("lualine.nvim", "lualine", {
 		},
 
 		section_separators = {
-			left = "",
-			right = "",
+			left = "",
+			right = "",
 		},
 
 		globalstatus = true,
@@ -432,9 +397,7 @@ setup_module("lualine.nvim", "lualine", {
 		lualine_c = {
 			{
 				"filename",
-
 				path = 1,
-
 				symbols = {
 					modified = " [+]",
 					readonly = " [RO]",
@@ -446,7 +409,6 @@ setup_module("lualine.nvim", "lualine", {
 
 		lualine_x = {
 			{
-
 				function()
 					local clients = vim.lsp.get_clients({ bufnr = 0 })
 
@@ -480,27 +442,4 @@ setup_module("lualine.nvim", "lualine", {
 			},
 		},
 	},
-})
-
---------------------------------------------------------------------------------
--- Treesitter
---------------------------------------------------------------------------------
-
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = {
-		"c",
-		"cpp",
-		"go",
-		"javascript",
-		"lua",
-		"markdown",
-		"python",
-		"rust",
-		"typescript",
-		"zig",
-	},
-
-	callback = function(args)
-		pcall(vim.treesitter.start, args.buf)
-	end,
 })

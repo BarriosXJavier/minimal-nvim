@@ -1,3 +1,5 @@
+/pack
+
 # Neovim runtime artifacts
 *.log
 nvim.log
@@ -30,3 +32,4 @@ Thumbs.db
 # Dependency/build caches
 /.cache/
 /.mason/
+pack/

@@ -1,9 +1,7 @@
 local mason_path = vim.fn.expand("~/.local/share/nvim/mason/bin")
-vim.env.PATH = mason_path .. ":" .. vim.env.PATH
+vim.env.PATH = string.format("%s:%s", mason_path, vim.env.PATH)
 
 local opt = vim.opt
-
-vim.g.mapleader = " "
 opt.number = true
 opt.relativenumber = true
 opt.expandtab = true
@@ -18,21 +16,18 @@ opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 opt.termguicolors = true
 opt.signcolumn = "yes"
 opt.cursorline = true
-opt.scrolloff = 200
-opt.sidescrolloff = 4
+opt.scrolloff = 15
+opt.sidescrolloff = 8
 opt.splitbelow = true
 opt.splitright = true
-
 opt.mouse = "a"
-
-opt.guicursor = "n:block-blinkon0,i:block-blinkwait100-blinkon300-blinkoff200,r:block-blinkon0"
-opt.clipboard = "unnamedplus"
-
-vim.opt.updatetime = 1000
 opt.wrap = true
 opt.linebreak = true
 opt.breakindent = true
 opt.textwidth = 0
+opt.updatetime = 1000
+opt.guicursor = "n:block-blinkon0,i:block-blinkwait100-blinkon300-blinkoff200,r:block-blinkon0"
+opt.clipboard = "unnamedplus"
 
 vim.diagnostic.config({
 	virtual_text = true,
@@ -40,5 +35,8 @@ vim.diagnostic.config({
 	update_in_insert = false,
 })
 
-vim.cmd.packadd("gruber-darker.nvim")
-vim.cmd("colorscheme gruber-darker")
+-- Safe-load colorscheme so a missing/updating plugin doesn't crash startup
+local ok = pcall(vim.cmd.packadd, "gruber-darker.nvim")
+if ok then
+	vim.cmd("colorscheme gruber-darker")
+end
