@@ -9,8 +9,8 @@ map("i", "jk", "<Esc>", { desc = "Exit insert mode" })
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
 
 map("n", "<C-c>", function()
-	vim.cmd("%y")
-	print("File copied to +register")
+    vim.cmd("%y")
+    print("File copied to +register")
 end, { desc = "Copy whole file to clipboard" })
 
 map("n", ";", ":", { desc = "Command mode" })
@@ -18,7 +18,7 @@ map("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
 map("n", "<leader>z", "<cmd>ZenMode<cr>", { desc = "Toggle Mode" })
 
 map("n", "<leader>fm", function()
-	require("conform").format({ stop_after_first = true, lsp_fallback = true })
+    require("conform").format({ stop_after_first = true, lsp_fallback = true })
 end, { desc = "Format buffer" })
 
 -- Trouble
@@ -29,8 +29,7 @@ map("n", "<leader>xl", "<cmd>Trouble lsp toggle focus=false win.position=right<c
 map("n", "<leader>xL", "<cmd>Trouble loclist toggle<cr>", { desc = "Trouble location list" })
 map("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", { desc = "Trouble quickfix list" })
 
--- Navigation / File Tree
-map("n", "<leader>e", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle file tree" })
+
 map("n", "<C-n>", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle file tree" })
 map("n", "<leader>o", "<cmd>Oil<cr>", { desc = "Open oil explorer" })
 
