@@ -16,7 +16,7 @@ opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 opt.termguicolors = true
 opt.signcolumn = "yes"
 opt.cursorline = true
-opt.scrolloff = 15
+opt.scrolloff = 25
 opt.sidescrolloff = 8
 opt.splitbelow = true
 opt.splitright = true
@@ -30,13 +30,16 @@ opt.guicursor = "n:block-blinkon0,i:block-blinkwait100-blinkon300-blinkoff200,r:
 opt.clipboard = "unnamedplus"
 
 vim.diagnostic.config({
-    virtual_text = true,
-    signs = true,
-    update_in_insert = false,
+  virtual_text = {
+    spacing = 2,
+    prefix = "●"
+  },
+  signs = true,
+  update_in_insert = false,
 })
 
 -- Safe-load colorscheme so a missing/updating plugin doesn't crash startup
 local ok = pcall(vim.cmd.packadd, "gruber-darker.nvim")
 if ok then
-   vim.cmd("colorscheme gruber-darker")
+  vim.cmd("colorscheme gruber-darker")
 end

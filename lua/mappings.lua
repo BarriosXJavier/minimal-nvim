@@ -21,6 +21,9 @@ map("n", "<leader>fm", function()
     require("conform").format({ stop_after_first = true, lsp_fallback = true })
 end, { desc = "Format buffer" })
 
+map("n", "<leader>e", vim.diagnostic.open_float, {
+    desc = "Show diagnostics",
+})
 -- Trouble
 map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Trouble diagnostics" })
 map("n", "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Trouble buffer diagnostics" })
@@ -51,74 +54,74 @@ map("n", "<C-Down>", "5<C-w>-", { desc = "Decrease window height" })
 
 -- Telescope
 util.with_plugin("telescope.nvim", function()
-	local telescope = require("telescope.builtin")
-	map("n", "<leader>ff", telescope.find_files, { desc = "Find files" })
-	map("n", "<leader>fr", telescope.oldfiles, { desc = "Find recent files" })
-	map("n", "<leader>fg", telescope.live_grep, { desc = "Live grep" })
-	map("n", "<leader>fw", telescope.grep_string, { desc = "Find word under cursor" })
-	map("n", "<leader>fb", telescope.buffers, { desc = "Find buffers" })
-	map("n", "<leader>fh", telescope.help_tags, { desc = "Find help tags" })
-	map("n", "<leader>fk", telescope.keymaps, { desc = "Find keymaps" })
-	map("n", "<leader>fd", telescope.diagnostics, { desc = "Find diagnostics" })
-	map("n", "<leader>fc", telescope.current_buffer_fuzzy_find, { desc = "Find in current buffer" })
+    local telescope = require("telescope.builtin")
+    map("n", "<leader>ff", telescope.find_files, { desc = "Find files" })
+    map("n", "<leader>fr", telescope.oldfiles, { desc = "Find recent files" })
+    map("n", "<leader>fg", telescope.live_grep, { desc = "Live grep" })
+    map("n", "<leader>fw", telescope.grep_string, { desc = "Find word under cursor" })
+    map("n", "<leader>fb", telescope.buffers, { desc = "Find buffers" })
+    map("n", "<leader>fh", telescope.help_tags, { desc = "Find help tags" })
+    map("n", "<leader>fk", telescope.keymaps, { desc = "Find keymaps" })
+    map("n", "<leader>fd", telescope.diagnostics, { desc = "Find diagnostics" })
+    map("n", "<leader>fc", telescope.current_buffer_fuzzy_find, { desc = "Find in current buffer" })
 end)
 
 -- Toggleterm
 util.with_plugin("toggleterm.nvim", function()
-	local Terminal = require("toggleterm.terminal").Terminal
-	local terms = {
-		lazygit = Terminal:new({ cmd = "lazygit", direction = "float", hidden = true }),
-		float = Terminal:new({ direction = "float", hidden = true }),
-		vert = Terminal:new({ direction = "vertical", hidden = true }),
-		horiz = Terminal:new({
-			direction = "horizontal",
-			size = math.max(8, math.floor(vim.o.lines * 0.25)),
-			hidden = true,
-		}),
-	}
+    local Terminal = require("toggleterm.terminal").Terminal
+    local terms = {
+        lazygit = Terminal:new({ cmd = "lazygit", direction = "float", hidden = true }),
+        float = Terminal:new({ direction = "float", hidden = true }),
+        vert = Terminal:new({ direction = "vertical", hidden = true }),
+        horiz = Terminal:new({
+            direction = "horizontal",
+            size = math.max(8, math.floor(vim.o.lines * 0.25)),
+            hidden = true,
+        }),
+    }
 
-	local function toggle_exclusive(target_key)
-		for k, term in pairs(terms) do
-			if k ~= target_key then
-				term:close()
-			end
-		end
-		terms[target_key]:toggle()
-	end
+    local function toggle_exclusive(target_key)
+        for k, term in pairs(terms) do
+            if k ~= target_key then
+                term:close()
+            end
+        end
+        terms[target_key]:toggle()
+    end
 
-	map("n", "<leader>lg", function()
-		toggle_exclusive("lazygit")
-	end, { desc = "Toggle lazygit" })
-	map({ "n", "t" }, "<A-i>", function()
-		toggle_exclusive("float")
-	end, { desc = "Toggle floating terminal" })
-	map({ "n", "t" }, "<A-v>", function()
-		toggle_exclusive("vert")
-	end, { desc = "Toggle vertical terminal" })
-	map({ "n", "t" }, "<A-h>", function()
-		toggle_exclusive("horiz")
-	end, { desc = "Toggle horizontal terminal" })
+    map("n", "<leader>lg", function()
+        toggle_exclusive("lazygit")
+    end, { desc = "Toggle lazygit" })
+    map({ "n", "t" }, "<A-i>", function()
+        toggle_exclusive("float")
+    end, { desc = "Toggle floating terminal" })
+    map({ "n", "t" }, "<A-v>", function()
+        toggle_exclusive("vert")
+    end, { desc = "Toggle vertical terminal" })
+    map({ "n", "t" }, "<A-h>", function()
+        toggle_exclusive("horiz")
+    end, { desc = "Toggle horizontal terminal" })
 end)
 
 -- DAP
 util.with_plugin("nvim-dap", function()
-	local dap = require("dap")
-	local dapui = require("dapui")
+    local dap = require("dap")
+    local dapui = require("dapui")
 
-	map("n", "<F5>", dap.continue, { desc = "Debug continue" })
-	map("n", "<F10>", dap.step_over, { desc = "Debug step over" })
-	map("n", "<F11>", dap.step_into, { desc = "Debug step into" })
-	map("n", "<F12>", dap.step_out, { desc = "Debug step out" })
-	map("n", "<leader>b", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
-	map("n", "<leader>dr", dap.repl.open, { desc = "Open debug REPL" })
-	map("n", "<leader>dl", dap.run_last, { desc = "Run last debug config" })
-	map({ "n", "v" }, "<leader>dh", dapui.eval, { desc = "Evaluate expression" })
+    map("n", "<F5>", dap.continue, { desc = "Debug continue" })
+    map("n", "<F10>", dap.step_over, { desc = "Debug step over" })
+    map("n", "<F11>", dap.step_into, { desc = "Debug step into" })
+    map("n", "<F12>", dap.step_out, { desc = "Debug step out" })
+    map("n", "<leader>b", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
+    map("n", "<leader>dr", dap.repl.open, { desc = "Open debug REPL" })
+    map("n", "<leader>dl", dap.run_last, { desc = "Run last debug config" })
+    map({ "n", "v" }, "<leader>dh", dapui.eval, { desc = "Evaluate expression" })
 
-	map("n", "<leader>B", function()
-		dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
-	end, { desc = "Set conditional breakpoint" })
+    map("n", "<leader>B", function()
+        dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+    end, { desc = "Set conditional breakpoint" })
 
-	map("n", "<leader>lp", function()
-		dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
-	end, { desc = "Set log point" })
+    map("n", "<leader>lp", function()
+        dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
+    end, { desc = "Set log point" })
 end)
