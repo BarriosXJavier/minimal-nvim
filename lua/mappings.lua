@@ -1,72 +1,91 @@
 local util = require("util")
 local map = vim.keymap.set
 
-map("i", "<C-h>", "<Left>", { desc = "Cursor left" })
-map("i", "<C-j>", "<Down>", { desc = "Cursor down" })
-map("i", "<C-k>", "<Up>", { desc = "Cursor up" })
-map("i", "<C-l>", "<Right>", { desc = "Cursor right" })
-map("i", "jk", "<Esc>", { desc = "Exit insert mode" })
-map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
+local function nmap(lhs, rhs, desc, opts)
+    map("n", lhs, rhs, vim.tbl_extend("force", { desc = desc }, opts or {}))
+end
 
-map("n", "<C-c>", function()
+local function imap(lhs, rhs, desc, opts)
+    map("i", lhs, rhs, vim.tbl_extend("force", { desc = desc }, opts or {}))
+end
+
+local function tmap(lhs, rhs, desc, opts)
+    map("t", lhs, rhs, vim.tbl_extend("force", { desc = desc }, opts or {}))
+end
+
+imap("<C-h>", "<Left>", "Cursor left")
+imap("<C-j>", "<Down>", "Cursor down")
+imap("<C-k>", "<Up>", "Cursor up")
+imap("<C-l>", "<Right>", "Cursor right")
+imap("jk", "<Esc>", "Exit insert mode")
+
+nmap("<Esc>", "<cmd>nohlsearch<CR>", "Clear highlights")
+nmap(";", ":", "Command mode")
+nmap("<C-s>", "<cmd>w<CR>", "Save file")
+nmap("<Tab>", "<cmd>bnext<cr>", "Next buffer")
+nmap("<S-Tab>", "<cmd>bprev<cr>", "Prev buffer")
+nmap("<C-d>", "<C-d>zz", "Scroll down and center")
+nmap("<C-u>", "<C-u>zz", "Scroll up and center")
+nmap("<C-Left>", "5<C-w><", "Decrease window width")
+nmap("<C-Right>", "5<C-w>>", "Increase window width")
+nmap("<C-Up>", "5<C-w>+", "Increase window height")
+nmap("<C-Down>", "5<C-w>-", "Decrease window height")
+nmap("<leader>e", vim.diagnostic.open_float, "Show diagnostics")
+
+nmap("<C-c>", function()
     vim.cmd("%y")
     print("File copied to +register")
-end, { desc = "Copy whole file to clipboard" })
+end, "Copy whole file to clipboard")
 
-map("n", ";", ":", { desc = "Command mode" })
-map("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
-map("n", "<leader>z", "<cmd>ZenMode<cr>", { desc = "Toggle Mode" })
-
-map("n", "<leader>fm", function()
+nmap("<leader>fm", function()
     require("conform").format({ stop_after_first = true, lsp_fallback = true })
-end, { desc = "Format buffer" })
+end, "Format buffer")
 
-map("n", "<leader>e", vim.diagnostic.open_float, {
-    desc = "Show diagnostics",
-})
--- Trouble
-map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Trouble diagnostics" })
-map("n", "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Trouble buffer diagnostics" })
-map("n", "<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", { desc = "Trouble symbols" })
-map("n", "<leader>xl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", { desc = "Trouble LSP" })
-map("n", "<leader>xL", "<cmd>Trouble loclist toggle<cr>", { desc = "Trouble location list" })
-map("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", { desc = "Trouble quickfix list" })
+nmap("<C-h>", "<C-w>h", "Move to left window")
+nmap("<C-j>", "<C-w>j", "Move to bottom window")
+nmap("<C-k>", "<C-w>k", "Move to top window")
+nmap("<C-l>", "<C-w>l", "Move to right window")
 
+tmap("<C-h>", "<C-\\><C-n><C-w>h", "Move to left window")
+tmap("<C-j>", "<C-\\><C-n><C-w>j", "Move to bottom window")
+tmap("<C-k>", "<C-\\><C-n><C-w>k", "Move to top window")
+tmap("<C-l>", "<C-\\><C-n><C-w>l", "Move to right window")
 
-map("n", "<C-n>", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle file tree" })
-map("n", "<leader>o", "<cmd>Oil<cr>", { desc = "Open oil explorer" })
-
-map("n", "<Tab>", "<cmd>bnext<cr>", { desc = "Next buffer" })
-map("n", "<S-Tab>", "<cmd>bprev<cr>", { desc = "Prev buffer" })
-map("n", "<C-d>", "<C-d>zz", { desc = "Scroll down and center" })
-map("n", "<C-u>", "<C-u>zz", { desc = "Scroll up and center" })
-
--- Window Movements (Normal & Terminal Mode)
-map({ "n", "t" }, "<C-h>", "<C-\\><C-n><C-w>h", { desc = "Move to left window" })
-map({ "n", "t" }, "<C-j>", "<C-\\><C-n><C-w>j", { desc = "Move to bottom window" })
-map({ "n", "t" }, "<C-k>", "<C-\\><C-n><C-w>k", { desc = "Move to top window" })
-map({ "n", "t" }, "<C-l>", "<C-\\><C-n><C-w>l", { desc = "Move to right window" })
-
-map("n", "<C-Left>", "5<C-w><", { desc = "Decrease window width" })
-map("n", "<C-Right>", "5<C-w>>", { desc = "Increase window width" })
-map("n", "<C-Up>", "5<C-w>+", { desc = "Increase window height" })
-map("n", "<C-Down>", "5<C-w>-", { desc = "Decrease window height" })
-
--- Telescope
-util.with_plugin("telescope.nvim", function()
-    local telescope = require("telescope.builtin")
-    map("n", "<leader>ff", telescope.find_files, { desc = "Find files" })
-    map("n", "<leader>fr", telescope.oldfiles, { desc = "Find recent files" })
-    map("n", "<leader>fg", telescope.live_grep, { desc = "Live grep" })
-    map("n", "<leader>fw", telescope.grep_string, { desc = "Find word under cursor" })
-    map("n", "<leader>fb", telescope.buffers, { desc = "Find buffers" })
-    map("n", "<leader>fh", telescope.help_tags, { desc = "Find help tags" })
-    map("n", "<leader>fk", telescope.keymaps, { desc = "Find keymaps" })
-    map("n", "<leader>fd", telescope.diagnostics, { desc = "Find diagnostics" })
-    map("n", "<leader>fc", telescope.current_buffer_fuzzy_find, { desc = "Find in current buffer" })
+util.with_plugin("zen-mode.nvim", function()
+    nmap("<leader>z", "<cmd>ZenMode<cr>", "Toggle zen mode")
 end)
 
--- Toggleterm
+util.with_plugin("trouble.nvim", function()
+    nmap("<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", "Trouble diagnostics")
+    nmap("<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", "Trouble buffer diagnostics")
+    nmap("<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", "Trouble symbols")
+    nmap("<leader>xl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", "Trouble LSP")
+    nmap("<leader>xL", "<cmd>Trouble loclist toggle<cr>", "Trouble location list")
+    nmap("<leader>xQ", "<cmd>Trouble qflist toggle<cr>", "Trouble quickfix list")
+end)
+
+util.with_plugin("nvim-tree.lua", function()
+    nmap("<C-n>", "<cmd>NvimTreeToggle<cr>", "Toggle file tree")
+end)
+
+util.with_plugin("oil.nvim", function()
+    nmap("<leader>o", "<cmd>Oil<cr>", "Open oil explorer")
+end)
+
+util.with_plugin("telescope.nvim", function()
+    local builtin = require("telescope.builtin")
+
+    nmap("<leader>ff", builtin.find_files, "Find files")
+    nmap("<leader>fr", builtin.oldfiles, "Find recent files")
+    nmap("<leader>fg", builtin.live_grep, "Live grep")
+    nmap("<leader>fw", builtin.grep_string, "Find word under cursor")
+    nmap("<leader>fb", builtin.buffers, "Find buffers")
+    nmap("<leader>fh", builtin.help_tags, "Find help tags")
+    nmap("<leader>fk", builtin.keymaps, "Find keymaps")
+    nmap("<leader>fd", builtin.diagnostics, "Find diagnostics")
+    nmap("<leader>fc", builtin.current_buffer_fuzzy_find, "Find in current buffer")
+end)
+
 util.with_plugin("toggleterm.nvim", function()
     local Terminal = require("toggleterm.terminal").Terminal
     local terms = {
@@ -75,23 +94,24 @@ util.with_plugin("toggleterm.nvim", function()
         vert = Terminal:new({ direction = "vertical", hidden = true }),
         horiz = Terminal:new({
             direction = "horizontal",
-            size = math.max(8, math.floor(vim.o.lines * 0.25)),
+            size = util.terminal_size("horizontal"),
             hidden = true,
         }),
     }
 
-    local function toggle_exclusive(target_key)
-        for k, term in pairs(terms) do
-            if k ~= target_key then
+    local function toggle_exclusive(target)
+        for key, term in pairs(terms) do
+            if key ~= target then
                 term:close()
             end
         end
-        terms[target_key]:toggle()
+
+        terms[target]:toggle()
     end
 
-    map("n", "<leader>lg", function()
+    nmap("<leader>lg", function()
         toggle_exclusive("lazygit")
-    end, { desc = "Toggle lazygit" })
+    end, "Toggle lazygit")
     map({ "n", "t" }, "<A-i>", function()
         toggle_exclusive("float")
     end, { desc = "Toggle floating terminal" })
@@ -103,25 +123,24 @@ util.with_plugin("toggleterm.nvim", function()
     end, { desc = "Toggle horizontal terminal" })
 end)
 
--- DAP
 util.with_plugin("nvim-dap", function()
+    util.packadd("nvim-dap-ui")
+
     local dap = require("dap")
     local dapui = require("dapui")
 
-    map("n", "<F5>", dap.continue, { desc = "Debug continue" })
-    map("n", "<F10>", dap.step_over, { desc = "Debug step over" })
-    map("n", "<F11>", dap.step_into, { desc = "Debug step into" })
-    map("n", "<F12>", dap.step_out, { desc = "Debug step out" })
-    map("n", "<leader>b", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
-    map("n", "<leader>dr", dap.repl.open, { desc = "Open debug REPL" })
-    map("n", "<leader>dl", dap.run_last, { desc = "Run last debug config" })
+    nmap("<F5>", dap.continue, "Debug continue")
+    nmap("<F10>", dap.step_over, "Debug step over")
+    nmap("<F11>", dap.step_into, "Debug step into")
+    nmap("<F12>", dap.step_out, "Debug step out")
+    nmap("<leader>b", dap.toggle_breakpoint, "Toggle breakpoint")
+    nmap("<leader>dr", dap.repl.open, "Open debug REPL")
+    nmap("<leader>dl", dap.run_last, "Run last debug config")
     map({ "n", "v" }, "<leader>dh", dapui.eval, { desc = "Evaluate expression" })
-
-    map("n", "<leader>B", function()
+    nmap("<leader>B", function()
         dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
-    end, { desc = "Set conditional breakpoint" })
-
-    map("n", "<leader>lp", function()
+    end, "Set conditional breakpoint")
+    nmap("<leader>lp", function()
         dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
-    end, { desc = "Set log point" })
+    end, "Set log point")
 end)

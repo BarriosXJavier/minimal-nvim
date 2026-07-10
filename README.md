@@ -1,91 +1,334 @@
-# nvim-minimal
+# Neovim config
 
-A minimal Neovim config using **native Neovim APIs** (`vim.pack`, `vim.lsp.config`, `vim.snippet`, `vim.treesitter`)
+A modular Neovim setup built mostly on native APIs:
+
+- `vim.pack` for plugin management
+- `vim.lsp.config()` / `vim.lsp.enable()` for LSP
+- `vim.snippet` for snippets
+- `vim.treesitter.start()` for Treesitter activation
+
+The config is organized as small Lua modules instead of one large plugin file.
 
 ## Requirements
 
-- Neovim >= 0.12
-- [Nerd Font](https://www.nerdfonts.com/) (for icons)
+- Neovim `>= 0.12`
+- A Nerd Font for icons
+- `git`
+- `cargo` if you want to build `blink.cmp`'s native fuzzy matcher locally
 
 ## Installation
 
-```sh
-git clone https://github.com/BarriosXJavier/nvim-minimal ~/.config/nvim-minimal
-```
-
-Add an alias to your shell config:
+This repo is meant to live at `~/.config/nvim`.
 
 ```sh
-alias mvim='NVIM_APPNAME=nvim-minimal nvim'
+git clone <your-repo-url> ~/.config/nvim
 ```
 
-On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP binaries are installed on demand via Mason (shared with NvChad at `~/.local/share/nvim/mason`).
+On first start, plugins are installed automatically through `vim.pack.add()`.
 
-## File Structure
+## How startup works
 
+`init.lua` loads modules in this order:
+
+1. `options`
+2. `plugins`
+3. `lsp`
+4. `dap-config`
+5. `autocmds`
+6. `mappings`
+
+### Plugin bootstrap flow
+
+`lua/plugins.lua` is the entrypoint for plugin setup. It:
+
+1. loads `lua/plugins/bootstrap.lua`
+2. prepends Mason's bin dir to `PATH`
+3. registers plugin-related autocmds
+4. installs plugin specs from `lua/plugins/specs.lua` via `vim.pack.add()`
+5. runs grouped setup modules:
+   - `plugins.tooling`
+   - `plugins.editor`
+   - `plugins.navigation`
+   - `plugins.completion`
+   - `plugins.terminal`
+   - `plugins.ui`
+
+### Lockfile
+
+Plugin revisions are pinned in `nvim-pack-lock.json`.
+
+## File structure
+
+```text
+~/.config/nvim/
+├── init.lua
+├── README.md
+├── nvim-pack-lock.json
+└── lua/
+    ├── autocmds.lua
+    ├── dap-config.lua
+    ├── languages.lua
+    ├── lsp.lua
+    ├── mappings.lua
+    ├── options.lua
+    ├── plugins.lua
+    ├── util.lua
+    └── plugins/
+        ├── bootstrap.lua
+        ├── completion.lua
+        ├── editor.lua
+        ├── navigation.lua
+        ├── specs.lua
+        ├── terminal.lua
+        ├── tooling.lua
+        └── ui.lua
 ```
-~/.config/nvim-minimal/
-├── init.lua              # Entry point
-├── lua/
-│   ├── options.lua       # Neovim native options, colorscheme
-│   ├── plugins.lua       # Plugin list, setup calls, autocmds
-│   ├── lsp.lua           # LSP server configs, buffer-local keymaps
-│   ├── dap-config.lua    # DAP adapters, configurations, listeners
-│   └── mappings.lua      # All keymaps
-├── nvim-pack-lock.json   # Plugin version lockfile
-└── README.md
-```
+
+## Module overview
+
+### Core modules
+
+- `lua/options.lua`
+  - editor options
+  - diagnostic UI configuration
+- `lua/autocmds.lua`
+  - `:PackUpdate` command
+  - Treesitter auto-start for selected filetypes
+- `lua/languages.lua`
+  - shared language metadata
+  - LSP server definitions
+  - formatter mappings
+  - Treesitter filetype list
+- `lua/lsp.lua`
+  - LSP client capabilities
+  - server registration and enablement
+  - LSP hover binding on attach
+- `lua/dap-config.lua`
+  - DAP adapters and language-specific debug configurations
+- `lua/mappings.lua`
+  - core and plugin keymaps
+- `lua/util.lua`
+  - safe plugin/module helpers
+  - augroup helper
+  - shared terminal sizing helper
+
+### Plugin modules
+
+- `lua/plugins/specs.lua`
+  - plugin source list for `vim.pack`
+- `lua/plugins/bootstrap.lua`
+  - plugin bootstrap helpers
+  - Mason `PATH` setup
+  - `blink.cmp` background native build scheduling
+- `lua/plugins/tooling.lua`
+  - `mason.nvim`
+- `lua/plugins/editor.lua`
+  - `which-key`, `autopairs`, `gitsigns`, `marks`, `conform`, `autosave`
+- `lua/plugins/navigation.lua`
+  - `telescope`, `trouble`, `oil`, `nvim-tree`
+- `lua/plugins/completion.lua`
+  - `blink.cmp`, `blink.lib`, `lspkind`
+- `lua/plugins/terminal.lua`
+  - `toggleterm`
+- `lua/plugins/ui.lua`
+  - colorscheme, `lualine`, `bufferline`, `ibl`, `render-markdown`, `tiny-glimmer`
 
 ## Plugins
 
-| Plugin | Purpose |
-|--------|---------|
-| [gruber-darker.nvim](https://github.com/blazkowolf/gruber-darker.nvim) | Colorscheme |
-| [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) | File icons |
-| [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | Syntax highlighting |
-| [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) | LSP server defaults |
-| [blink.cmp](https://github.com/saghen/blink.cmp) | Autocompletion |
-| [lspkind.nvim](https://github.com/onsails/lspkind.nvim) | Completion kind icons |
-| [friendly-snippets](https://github.com/rafamadriz/friendly-snippets) | Snippet definitions |
-| [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) | File explorer |
-| [oil.nvim](https://github.com/stevearc/oil.nvim) | File explorer (buffer-based) |
-| [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) | Tabline |
-| [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) | Statusline |
-| [which-key.nvim](https://github.com/folke/which-key.nvim) | Keymap help popup |
-| [trouble.nvim](https://github.com/folke/trouble.nvim) | Diagnostics/references list |
-| [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) | Fuzzy finder |
-| [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) | Utility library (dep of telescope) |
-| [tiny-glimmer.nvim](https://github.com/rachartier/tiny-glimmer.nvim) | Text motion animations |
-| [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | Git decorations |
-| [marks.nvim](https://github.com/chentoast/marks.nvim) | Better mark management |
-| [nvim-autopairs](https://github.com/windwp/nvim-autopairs) | Auto-close brackets |
-| [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | Terminal manager |
-| [conform.nvim](https://github.com/stevearc/conform.nvim) | Code formatter |
-| [autosave.nvim](https://github.com/0x00-ketsu/autosave.nvim) | Auto-save |
-| [mason.nvim](https://github.com/williamboman/mason.nvim) | LSP/DAP/linter installer |
-| [nvim-dap](https://github.com/mfussenegger/nvim-dap) | Debug adapter protocol |
-| [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui) | DAP UI |
-| [nvim-nio](https://github.com/nvim-neotest/nvim-nio) | Async IO (dep of nvim-dap-ui) |
+### Core editing / UI
+
+- `blazkowolf/gruber-darker.nvim`
+- `nvim-tree/nvim-web-devicons`
+- `lukas-reineke/indent-blankline.nvim`
+- `akinsho/bufferline.nvim`
+- `nvim-lualine/lualine.nvim`
+- `rachartier/tiny-glimmer.nvim`
+- `MeanderingProgrammer/render-markdown.nvim`
+- `folke/zen-mode.nvim`
+
+### Navigation / search
+
+- `nvim-tree/nvim-tree.lua`
+- `stevearc/oil.nvim`
+- `nvim-telescope/telescope.nvim`
+- `nvim-lua/plenary.nvim`
+- `folke/trouble.nvim`
+
+### LSP / completion / formatting
+
+- `neovim/nvim-lspconfig`
+- `saghen/blink.lib`
+- `saghen/blink.cmp`
+- `onsails/lspkind.nvim`
+- `rafamadriz/friendly-snippets`
+- `stevearc/conform.nvim`
+- `williamboman/mason.nvim`
+
+### Editing helpers
+
+- `windwp/nvim-autopairs`
+- `lewis6991/gitsigns.nvim`
+- `chentoast/marks.nvim`
+- `0x00-ketsu/autosave.nvim`
+
+### Terminal / debug / database
+
+- `akinsho/toggleterm.nvim`
+- `mfussenegger/nvim-dap`
+- `rcarriga/nvim-dap-ui`
+- `nvim-neotest/nvim-nio`
+- `tpope/vim-dadbod`
+- `kristijanhusak/vim-dadbod-ui`
+- `kristijanhusak/vim-dadbod-completion`
+
+### Extras
+
+- `folke/which-key.nvim`
+- `nvim-treesitter/nvim-treesitter`
+- `jtprogru/pack-ui.nvim`
+
+## blink.cmp and native build behavior
+
+This config does **not** use `lazy.nvim`.
+
+Instead, `blink.cmp` is integrated with `vim.pack` like this:
+
+- `blink.lib` and `blink.cmp` are installed by `vim.pack.add()` from `plugins/specs.lua`
+- `plugins/completion.lua` sets up `blink.cmp`
+- `plugins/bootstrap.lua` schedules native fuzzy builds in the background
+
+### When the native build runs
+
+- on `PackChanged` install/update events for `blink.cmp`
+- once on `VimEnter` if the native library is missing
+
+This avoids blocking startup while still allowing the Rust/native fuzzy matcher to be built when needed.
+
+Current completion fuzzy mode:
+
+```lua
+fuzzy = {
+    implementation = "prefer_rust",
+}
+```
+
+So startup remains responsive, and the native matcher is used when available.
+
+## LSP
+
+LSP servers are defined centrally in `lua/languages.lua` and enabled in `lua/lsp.lua`.
+
+Configured servers include:
+
+- `rust_analyzer`
+- `vtsls`
+- `emmet_language_server`
+- `tailwindcss`
+- `html`
+- `cssls`
+- `pyright`
+- `clangd`
+- `gopls`
+- `zls`
+- `lua_ls`
+- `bashls`
+- `marksman`
+- `sqls`
+- `prisma`
+- `taplo`
+- `yamlls`
+
+### LSP keymaps
+
+Currently, the only LSP keymap set in `on_attach` is:
+
+- `K` → hover documentation
+
+## Formatting
+
+Formatting is handled by `conform.nvim` using the shared formatter table in `lua/languages.lua`.
+
+Examples:
+
+- `lua` → `stylua`
+- `rust` → `rustfmt`
+- `go` → `gofmt`
+- `python` → `black`
+- `c`, `cpp` → `clang-format`
+- JS/TS/HTML/CSS/JSON/YAML/Markdown/Vue → `prettierd`, fallback `prettier`
+
+Manual format key:
+
+- `<leader>fm`
+
+## Treesitter
+
+Treesitter is started through a `FileType` autocmd in `lua/autocmds.lua` for:
+
+- `c`
+- `cpp`
+- `go`
+- `javascript`
+- `lua`
+- `markdown`
+- `python`
+- `rust`
+- `typescript`
+- `zig`
+
+Parsers are still managed separately from startup logic. Install missing parsers as needed.
+
+## DAP
+
+Configured adapters:
+
+- `lldb` for `c`, `cpp`, `rust`, `zig`
+- `go` via `dlv`
+- `bash` for `sh`, `zsh`
+
+DAP UI opens on session start and closes on termination/exit.
 
 ## Keymaps
 
-### Insert Mode
+Leader is set to `<Space>`.
+
+### Insert mode
 
 | Key | Action |
-|-----|--------|
+|---|---|
 | `<C-h>` | Cursor left |
 | `<C-j>` | Cursor down |
 | `<C-k>` | Cursor up |
 | `<C-l>` | Cursor right |
 | `jk` | Exit insert mode |
 
-### Normal Mode
+### Normal mode
 
 | Key | Action |
-|-----|--------|
-| `;` | Enter command mode |
+|---|---|
+| `<Esc>` | Clear search highlight |
+| `;` | Command mode |
 | `<C-s>` | Save file |
-| `<leader>fm` | Format buffer (conform) |
+| `<C-c>` | Copy whole file to clipboard |
+| `<Tab>` | Next buffer |
+| `<S-Tab>` | Previous buffer |
+| `<C-d>` | Scroll down and center |
+| `<C-u>` | Scroll up and center |
+| `<C-h/j/k/l>` | Move between windows |
+| `<C-Left>` | Decrease window width |
+| `<C-Right>` | Increase window width |
+| `<C-Up>` | Increase window height |
+| `<C-Down>` | Decrease window height |
+| `<leader>e` | Show diagnostics float |
+| `<leader>fm` | Format buffer |
+| `<leader>z` | Toggle Zen mode |
+| `<C-n>` | Toggle `nvim-tree` |
+| `<leader>o` | Open `oil.nvim` |
+
+### Telescope
+
+| Key | Action |
+|---|---|
 | `<leader>ff` | Find files |
 | `<leader>fr` | Find recent files |
 | `<leader>fg` | Live grep |
@@ -95,50 +338,32 @@ On first launch, plugins are auto-installed via `vim.pack.add`. LSP and DAP bina
 | `<leader>fk` | Find keymaps |
 | `<leader>fd` | Find diagnostics |
 | `<leader>fc` | Find in current buffer |
-| `<leader>xx` | Trouble diagnostics |
-| `<leader>xX` | Trouble buffer diagnostics |
-| `<leader>xs` | Trouble symbols |
-| `<leader>xl` | Trouble LSP |
-| `<leader>xL` | Trouble location list |
-| `<leader>xQ` | Trouble quickfix list |
-| `<leader>e` | Toggle nvim-tree |
-| `<C-n>` | Toggle nvim-tree |
-| `<leader>o` | Open oil.nvim |
-| `<leader>x` | Close buffer |
-| `<Tab>` | Next buffer |
-| `<S-Tab>` | Previous buffer |
-| `<C-h/j/k/l>` | Navigate windows |
 
-### LSP (buffer-local)
+### Trouble
 
 | Key | Action |
-|-----|--------|
-| `gd` | Go to definition |
-| `K` | Hover info |
-| `gi` | Go to implementation |
-| `gr` | Go to references |
-| `<leader>rn` | Rename symbol |
-| `gra` | Code action |
-| `[d` | Previous diagnostic |
-| `]d` | Next diagnostic |
-| `<leader>d` | Open diagnostic float |
-| `<leader>q` | Diagnostic loclist |
+|---|---|
+| `<leader>xx` | Diagnostics |
+| `<leader>xX` | Buffer diagnostics |
+| `<leader>xs` | Symbols |
+| `<leader>xl` | LSP list |
+| `<leader>xL` | Location list |
+| `<leader>xQ` | Quickfix list |
 
-Hover docs open automatically on idle in normal mode, and signature help opens automatically while typing in insert mode.
-
-### Terminal (toggleterm)
+### Terminal
 
 | Key | Action |
-|-----|--------|
-| `<leader>lg` | LazyGit (float) |
-| `<A-i>` | Toggle float terminal |
+|---|---|
+| `<leader>lg` | Toggle LazyGit |
+| `<A-i>` | Toggle floating terminal |
 | `<A-v>` | Toggle vertical terminal |
 | `<A-h>` | Toggle horizontal terminal |
+| terminal `<C-h/j/k/l>` | Move between windows |
 
-### Debug (DAP)
+### DAP
 
 | Key | Action |
-|-----|--------|
+|---|---|
 | `<F5>` | Continue |
 | `<F10>` | Step over |
 | `<F11>` | Step into |
@@ -147,49 +372,26 @@ Hover docs open automatically on idle in normal mode, and signature help opens a
 | `<leader>B` | Conditional breakpoint |
 | `<leader>lp` | Log point |
 | `<leader>dr` | Open REPL |
-| `<leader>dl` | Re-run last config |
+| `<leader>dl` | Run last config |
 | `<leader>dh` | Evaluate expression |
 
-### Completion (blink.cmp)
+### blink.cmp
 
 | Key | Action |
-|-----|--------|
-| `<CR>` | Accept selected item |
-| `<Tab>` | Next completion item / snippet forward |
-| `<S-Tab>` | Previous completion item / snippet backward |
+|---|---|
+| `<CR>` | Accept selected completion |
+| `<Tab>` | Snippet forward or next completion |
+| `<S-Tab>` | Snippet backward or previous completion |
 
-## LSP Servers
+## Commands
 
-Configured via `vim.lsp.config` with explicit `filetypes` and `cmd`:
+| Command | Action |
+|---|---|
+| `:PackUpdate` | Update plugins managed by `vim.pack` |
 
-| Server | Languages | Installed via |
-|--------|-----------|---------------|
-| `rust-analyzer` | Rust | Mason |
-| `vtsls` | TS/JS/TSX/JSX | Mason |
-| `pyright` | Python | Mason |
-| `clangd` | C/C++/ObjC | Mason |
-| `gopls` | Go | Mason |
-| `zls` | Zig | Mason |
-| `lua-language-server` | Lua | Mason |
-| `bash-language-server` | Bash/Zsh | Mason |
+## Notes
 
-## Debug Adapters
-
-| Adapter | Languages | Backend |
-|---------|-----------|---------|
-| `lldb` | C/C++/Rust/Zig | `codelldb` (Mason) |
-| `go` | Go | `dlv` (Mason) |
-| `bash` | Sh/Zsh | `bash-debug-adapter` (Mason) |
-
-## Mason
-
-Shares the Mason install directory with NvChad at `~/.local/share/nvim/mason` to avoid duplicating LSP/DAP binaries. The Mason `bin` directory is prepended to `PATH` in `options.lua`.
-
-## Treesitter
-
-Treesitter is enabled for: `c`, `cpp`, `go`, `javascript`, `lua`, `python`, `rust`, `typescript`, `zig`, `markdown`.
-
-Install parsers manually with `:TSInstall` when needed.
-
-- Preferred **native Neovim APIs** over external plugins where possible (`vim.pack`, `vim.lsp.config`, `vim.snippet`, `vim.diagnostic.jump`)
-- All keymaps in one file (`lua/mappings.lua`)
+- Mason binaries are shared under `~/.local/share/nvim/mason`
+- Mason's `bin` directory is prepended to `PATH` during plugin bootstrap
+- plugin revisions are locked in `nvim-pack-lock.json`
+- plugin-specific mappings are guarded so missing plugins fail more gracefully
