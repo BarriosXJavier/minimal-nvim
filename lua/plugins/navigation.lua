@@ -16,6 +16,11 @@ function M.setup()
             },
             exclude = {},
         },
+        update_focused_file = {
+            enable = true,
+            update_root = false,
+        },
+
     })
 end
 

@@ -14,7 +14,7 @@ function M.setup()
     util.setup_module("autosave.nvim", "autosave", {
         enabled = true,
         execution_message = "",
-        events = { "InsertLeave" },
+        events = { "InsertLeave", "TextChanged" },
         conditions = {
             exists = true,
             filename_is_not = {},

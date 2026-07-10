@@ -12,6 +12,7 @@ return {
         "rust",
         "typescript",
         "zig",
+        "odin"
     },
 
     formatters_by_ft = {
@@ -77,5 +78,6 @@ return {
             filetypes = { "toml" },
         },
         yamlls = {},
+        ols = {}
     },
 }
