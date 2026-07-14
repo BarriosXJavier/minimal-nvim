@@ -27,6 +27,10 @@ opt.updatetime = 1000
 opt.guicursor = "n:block-blinkon0,i:block-blinkwait100-blinkon300-blinkoff200,r:block-blinkon0"
 opt.clipboard = "unnamedplus"
 
+opt.fillchars = {
+    eob = " ",
+}
+
 vim.diagnostic.config({
     virtual_text = {
         spacing = 2,
