@@ -1,6 +1,7 @@
 local util = require("util")
 local map = vim.keymap.set
 
+
 local function nmap(lhs, rhs, desc, opts)
     map("n", lhs, rhs, vim.tbl_extend("force", { desc = desc }, opts or {}))
 end
@@ -30,7 +31,6 @@ nmap("<C-Left>", "5<C-w><", "Decrease window width")
 nmap("<C-Right>", "5<C-w>>", "Increase window width")
 nmap("<C-Up>", "5<C-w>+", "Increase window height")
 nmap("<C-Down>", "5<C-w>-", "Decrease window height")
-nmap("<leader>e", vim.diagnostic.open_float, "Show diagnostics")
 
 nmap("<C-c>", function()
     vim.cmd("%y")
@@ -84,6 +84,13 @@ util.with_plugin("telescope.nvim", function()
     nmap("<leader>fk", builtin.keymaps, "Find keymaps")
     nmap("<leader>fd", builtin.diagnostics, "Find diagnostics")
     nmap("<leader>fc", builtin.current_buffer_fuzzy_find, "Find in current buffer")
+    nmap("gd", builtin.lsp_definitions, "Goto definition")
+    nmap("gD", vim.lsp.buf.declaration, "Goto declaration")
+
+    nmap("<leader>gc", builtin.git_commits, "Git commits")
+    nmap("<leader>gC", builtin.git_bcommits, "Buffer commits")
+    nmap("<leader>gs", builtin.git_status, "Git status")
+    nmap("<leader>gb", builtin.git_branches, "Git branches")
 end)
 
 util.with_plugin("toggleterm.nvim", function()
