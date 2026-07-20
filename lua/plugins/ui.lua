@@ -149,6 +149,24 @@ function M.setup()
 
   util.packadd("gruber-darker.nvim")
   pcall(vim.cmd.colorscheme, "gruber-darker")
+
+  util.setup_module("transparent.nvim", "transparent", {
+    extra_groups = {
+      -- blink.cmp
+      "BlinkCmpMenu",
+      "BlinkCmpMenuBorder",
+      "BlinkCmpDoc",
+      "BlinkCmpDocBorder",
+      "BlinkCmpSignatureHelp",
+      "BlinkCmpSignatureHelpBorder",
+
+      -- which-key
+      "WhichKey",
+      "WhichKeyBorder",
+      "WhichKeyNormal",
+      "WhichKeyFloat",
+    }
+  })
 end
 
 return M
