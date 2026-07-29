@@ -1,5 +1,3 @@
-local util = require("util")
-
 local function executable_path_prompt()
   return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
 end
@@ -18,8 +16,9 @@ local function c_family_configuration()
   }
 end
 
-util.with_plugin("nvim-dap", function()
-  util.packadd("nvim-dap-ui")
+local ok, err = pcall(function()
+  pcall(vim.cmd.packadd, "nvim-dap")
+  pcall(vim.cmd.packadd, "nvim-dap-ui")
 
   local dap = require("dap")
   local dapui = require("dapui")
@@ -85,3 +84,6 @@ util.with_plugin("nvim-dap", function()
   }
   dap.configurations.zsh = dap.configurations.sh
 end)
+if not ok then
+  vim.schedule(function() vim.notify(("Plugin setup failed for nvim-dap: %s"):format(err), vim.log.levels.ERROR) end)
+end

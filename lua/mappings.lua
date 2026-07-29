@@ -1,6 +1,23 @@
-local util = require("util")
 local map = vim.keymap.set
 
+local function with_plugin(name, fn)
+  local ok, err = pcall(function()
+    pcall(vim.cmd.packadd, name)
+    fn()
+  end)
+  if not ok then
+    vim.schedule(function()
+      vim.notify(("Plugin setup failed for %s: %s"):format(name, err), vim.log.levels.ERROR)
+    end)
+  end
+end
+
+local function terminal_size(direction)
+  if direction == "vertical" then
+    return math.floor(vim.o.columns * 0.3)
+  end
+  return math.max(8, math.floor(vim.o.lines * 0.25))
+end
 
 local function nmap(lhs, rhs, desc, opts)
   map("n", lhs, rhs, vim.tbl_extend("force", { desc = desc }, opts or {}))
@@ -51,11 +68,11 @@ tmap("<C-j>", "<C-\\><C-n><C-w>j", "Move to bottom window")
 tmap("<C-k>", "<C-\\><C-n><C-w>k", "Move to top window")
 tmap("<C-l>", "<C-\\><C-n><C-w>l", "Move to right window")
 
-util.with_plugin("zen-mode.nvim", function()
+with_plugin("zen-mode.nvim", function()
   nmap("<leader>z", "<cmd>ZenMode<cr>", "Toggle zen mode")
 end)
 
-util.with_plugin("trouble.nvim", function()
+with_plugin("trouble.nvim", function()
   nmap("<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", "Trouble diagnostics")
   nmap("<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", "Trouble buffer diagnostics")
   nmap("<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", "Trouble symbols")
@@ -64,15 +81,15 @@ util.with_plugin("trouble.nvim", function()
   nmap("<leader>xQ", "<cmd>Trouble qflist toggle<cr>", "Trouble quickfix list")
 end)
 
-util.with_plugin("nvim-tree.lua", function()
+with_plugin("nvim-tree.lua", function()
   nmap("<C-n>", "<cmd>NvimTreeToggle<cr>", "Toggle file tree")
 end)
 
-util.with_plugin("oil.nvim", function()
+with_plugin("oil.nvim", function()
   nmap("<leader>o", "<cmd>Oil<cr>", "Open oil explorer")
 end)
 
-util.with_plugin("telescope.nvim", function()
+with_plugin("telescope.nvim", function()
   local builtin = require("telescope.builtin")
 
   nmap("<leader>ff", builtin.find_files, "Find files")
@@ -93,7 +110,7 @@ util.with_plugin("telescope.nvim", function()
   nmap("<leader>gb", builtin.git_branches, "Git branches")
 end)
 
-util.with_plugin("toggleterm.nvim", function()
+with_plugin("toggleterm.nvim", function()
   local Terminal = require("toggleterm.terminal").Terminal
   local terms = {
     lazygit = Terminal:new({ cmd = "lazygit", direction = "float", hidden = true }),
@@ -101,7 +118,7 @@ util.with_plugin("toggleterm.nvim", function()
     vert = Terminal:new({ direction = "vertical", hidden = true }),
     horiz = Terminal:new({
       direction = "horizontal",
-      size = util.terminal_size("horizontal"),
+      size = terminal_size("horizontal"),
       hidden = true,
     }),
   }
@@ -130,8 +147,8 @@ util.with_plugin("toggleterm.nvim", function()
   end, { desc = "Toggle horizontal terminal" })
 end)
 
-util.with_plugin("nvim-dap", function()
-  util.packadd("nvim-dap-ui")
+with_plugin("nvim-dap", function()
+  pcall(vim.cmd.packadd, "nvim-dap-ui")
 
   local dap = require("dap")
   local dapui = require("dapui")

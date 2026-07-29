@@ -1,7 +1,5 @@
-local languages = require("languages")
-local util = require("util")
-
-local augroup = util.augroup("core-autocmds")
+local languages = require("plugins")
+local augroup = vim.api.nvim_create_augroup("core-autocmds", { clear = true })
 
 vim.api.nvim_create_user_command("PackUpdate", function()
   vim.pack.update()

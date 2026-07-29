@@ -1,5 +1,4 @@
-local languages = require("languages")
-local util = require("util")
+local languages = require("plugins")
 
 local function on_attach(client, bufnr)
   if client:supports_method(vim.lsp.protocol.Methods.textDocument_hover) then
@@ -18,7 +17,8 @@ local function capabilities()
   return base
 end
 
-util.with_plugin("nvim-lspconfig", function()
+local ok, err = pcall(function()
+  pcall(vim.cmd.packadd, "nvim-lspconfig")
   local shared = {
     on_attach = on_attach,
     capabilities = capabilities(),
@@ -29,3 +29,6 @@ util.with_plugin("nvim-lspconfig", function()
     vim.lsp.enable(server)
   end
 end)
+if not ok then
+  vim.schedule(function() vim.notify(("Plugin setup failed for nvim-lspconfig: %s"):format(err), vim.log.levels.ERROR) end)
+end

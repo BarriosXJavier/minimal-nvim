@@ -28,14 +28,14 @@ opt.guicursor = "n:block-blinkon0,i:block-blinkwait100-blinkon300-blinkoff200,r:
 opt.clipboard = "unnamedplus"
 
 opt.fillchars = {
-    eob = " ",
+  eob = " ",
 }
 
 vim.diagnostic.config({
-    virtual_text = {
-        spacing = 2,
-        prefix = "●",
-    },
-    signs = true,
-    update_in_insert = false,
+  virtual_text = {
+    spacing = 2,
+    prefix = "●",
+  },
+  signs = true,
+  update_in_insert = false,
 })
