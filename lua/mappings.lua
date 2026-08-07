@@ -37,6 +37,7 @@ imap("<C-k>", "<Up>", "Cursor up")
 imap("<C-l>", "<Right>", "Cursor right")
 imap("jk", "<Esc>", "Exit insert mode")
 
+
 nmap("<Esc>", "<cmd>nohlsearch<CR>", "Clear highlights")
 nmap(";", ":", "Command mode")
 nmap("<C-s>", "<cmd>w<CR>", "Save file")
@@ -84,6 +85,33 @@ end)
 with_plugin("nvim-tree.lua", function()
   nmap("<C-n>", "<cmd>NvimTreeToggle<cr>", "Toggle file tree")
 end)
+
+with_plugin("supermaven-nvim", function()
+  local api = require("supermaven-nvim.api")
+  local function safe_nmap(lhs, rhs, desc)
+    if vim.fn.maparg(lhs, "n") == "" then
+      nmap(lhs, rhs, desc)
+    end
+  end
+  local function safe_imap(lhs, rhs, desc)
+    if vim.fn.maparg(lhs, "i") == "" then
+      imap(lhs, rhs, desc)
+    end
+  end
+
+  safe_nmap("<leader>sm", api.toggle, "Toggle Supermaven")
+  safe_nmap("<leader>sM", api.restart, "Restart Supermaven")
+  safe_nmap("<leader>ss", function()
+    vim.notify("Supermaven is " .. (api.is_running() and "running" or "stopped"))
+  end, "Supermaven status")
+
+  local completion_preview = require("supermaven-nvim.completion_preview")
+  safe_imap("<A-l>", completion_preview.on_accept_suggestion, "Accept Supermaven suggestion")
+  safe_imap("<A-j>", completion_preview.on_accept_suggestion_word, "Accept Supermaven word")
+  safe_imap("<A-h>", completion_preview.on_dispose_inlay, "Clear Supermaven suggestion")
+  safe_imap("<A-k>", completion_preview.on_dispose_inlay, "Reroll Supermaven suggestion")
+end)
+
 
 with_plugin("oil.nvim", function()
   nmap("<leader>o", "<cmd>Oil<cr>", "Open oil explorer")

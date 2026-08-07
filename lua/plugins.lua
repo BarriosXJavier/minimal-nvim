@@ -81,6 +81,7 @@ local languages = {
     ols = {},
     laravel_ls = {},
     intelephense = {},
+    vue_language_server = {},
   },
 }
 
@@ -96,7 +97,7 @@ for _, src in ipairs({
   "williamboman/mason.nvim", "stevearc/conform.nvim", "stevearc/oil.nvim", "0x00-ketsu/autosave.nvim",
   "rafamadriz/friendly-snippets", "MeanderingProgrammer/render-markdown.nvim", "folke/zen-mode.nvim",
   "tpope/vim-dadbod", "kristijanhusak/vim-dadbod-ui", "kristijanhusak/vim-dadbod-completion",
-  "jtprogru/pack-ui.nvim", "xiyaowong/transparent.nvim.git", "supermaven-inc/supermaven-nvim.git",
+  "jtprogru/pack-ui.nvim", "xiyaowong/transparent.nvim.git", "supermaven-inc/supermaven-nvim.git", "obsidian-nvim/obsidian.nvim.git"
 }) do
   specs[#specs + 1] = { src = "https://github.com/" .. src }
 end
@@ -163,9 +164,9 @@ setup("autosave.nvim", "autosave", {
 packadd("nvim-treesitter")
 packadd("friendly-snippets")
 with_plugin("supermaven-nvim", function()
-  require("supermaven-nvim").setup({})
+  require("supermaven-nvim").setup({ disable_keymaps = true })
 end)
-
+setup("obsidian-nvim", "obsidian")
 setup("telescope.nvim", "telescope")
 setup("trouble.nvim", "trouble", { focus = true })
 setup("oil.nvim", "oil")
