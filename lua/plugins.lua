@@ -166,7 +166,32 @@ packadd("friendly-snippets")
 with_plugin("supermaven-nvim", function()
   require("supermaven-nvim").setup({ disable_keymaps = true })
 end)
-setup("obsidian-nvim", "obsidian")
+setup("obsidian-nvim", "obsidian", {
+  legacy_commands = false,
+  workspaces = {
+    { name = "vault", path = "~/Documents/Obsidian" },
+  },
+  picker = { name = "telescope.nvim" },
+  daily_notes = {
+    folder = "daily_notes_" .. os.date("%Y"),
+    template = "~/Documents/Obsidian/monk_mode2026-06-20_to_2027-01-01.md",
+    workdays_only = false,
+  },
+  templates = {
+    substitutions = {
+      date = function(ctx, suffix)
+        local id = ctx.partial_note and ctx.partial_note.id
+        if id and id:match("^%d%d%d%d%-%d%d%-%d%d$") then
+          return id
+        end
+        local format = suffix or Obsidian.opts.templates.date_format
+        return require("obsidian.util").format_date(os.time(), format)
+      end,
+    },
+  },
+  frontmatter = { enabled = false },
+  ui = { enable = false },
+})
 setup("telescope.nvim", "telescope")
 setup("trouble.nvim", "trouble", { focus = true })
 setup("oil.nvim", "oil")

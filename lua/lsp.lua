@@ -32,3 +32,20 @@ end)
 if not ok then
   vim.schedule(function() vim.notify(("Plugin setup failed for nvim-lspconfig: %s"):format(err), vim.log.levels.ERROR) end)
 end
+
+local vault = vim.fn.expand("~/Documents/Obsidian")
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client and client.name == "marksman" then
+      local bufname = vim.api.nvim_buf_get_name(args.buf)
+      if vim.startswith(bufname, vault) then
+        vim.schedule(function()
+          if vim.api.nvim_buf_is_valid(args.buf) then
+            vim.lsp.buf_detach_client(args.buf, client.id)
+          end
+        end)
+      end
+    end
+  end,
+})
