@@ -176,16 +176,16 @@ with_plugin("toggleterm.nvim", function()
 end)
 
 with_plugin("nvim-dap", function()
-  pcall(vim.cmd.packadd, "nvim-dap-ui")
-
   local dap = require("dap")
   local dapui = require("dapui")
 
   nmap("<F5>", dap.continue, "Debug continue")
+  nmap("<F6>", dap.terminate, "Debug terminate")
   nmap("<F10>", dap.step_over, "Debug step over")
   nmap("<F11>", dap.step_into, "Debug step into")
   nmap("<F12>", dap.step_out, "Debug step out")
   nmap("<leader>b", dap.toggle_breakpoint, "Toggle breakpoint")
+  nmap("<leader>du", dapui.toggle, "Toggle debug UI")
   nmap("<leader>dr", dap.repl.open, "Open debug REPL")
   nmap("<leader>dl", dap.run_last, "Run last debug config")
   map({ "n", "v" }, "<leader>dh", dapui.eval, { desc = "Evaluate expression" })

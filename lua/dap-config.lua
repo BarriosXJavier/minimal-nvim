@@ -18,6 +18,8 @@ end
 
 local ok, err = pcall(function()
   pcall(vim.cmd.packadd, "nvim-dap")
+  -- dap-ui uses nvim-nio but does not load it for us in this native pack setup.
+  pcall(vim.cmd.packadd, "nvim-nio")
   pcall(vim.cmd.packadd, "nvim-dap-ui")
 
   local dap = require("dap")
@@ -59,6 +61,16 @@ local ok, err = pcall(function()
     args = {},
   }
 
+  dap.adapters["pwa-node"] = {
+    type = "server",
+    host = "127.0.0.1",
+    port = "${port}",
+    executable = {
+      command = "js-debug-adapter",
+      args = { "${port}" },
+    },
+  }
+
   local c_family = c_family_configuration()
   dap.configurations.c = c_family
   dap.configurations.cpp = c_family
@@ -83,6 +95,21 @@ local ok, err = pcall(function()
     },
   }
   dap.configurations.zsh = dap.configurations.sh
+
+  local javascript = {
+    {
+      name = "Launch file",
+      type = "pwa-node",
+      request = "launch",
+      program = "${file}",
+      cwd = "${workspaceFolder}",
+      sourceMaps = true,
+    },
+  }
+  dap.configurations.javascript = javascript
+  dap.configurations.javascriptreact = javascript
+  dap.configurations.typescript = javascript
+  dap.configurations.typescriptreact = javascript
 end)
 if not ok then
   vim.schedule(function() vim.notify(("Plugin setup failed for nvim-dap: %s"):format(err), vim.log.levels.ERROR) end)
