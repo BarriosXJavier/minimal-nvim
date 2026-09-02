@@ -88,7 +88,7 @@ local languages = {
 local specs = {}
 for _, src in ipairs({
   "nvim-tree/nvim-web-devicons", "nvim-tree/nvim-tree.lua", "nvim-treesitter/nvim-treesitter",
-  "neovim/nvim-lspconfig", "folke/which-key.nvim", "folke/trouble.nvim", "chentoast/marks.nvim",
+  "neovim/nvim-lspconfig", "nvimdev/lspsaga.nvim", "folke/which-key.nvim", "folke/trouble.nvim", "chentoast/marks.nvim",
   "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim", "blazkowolf/gruber-darker.nvim",
   "windwp/nvim-autopairs", "lewis6991/gitsigns.nvim", "saghen/blink.lib", "saghen/blink.cmp",
   "onsails/lspkind.nvim", "lukas-reineke/indent-blankline.nvim", "akinsho/bufferline.nvim",
@@ -151,6 +151,24 @@ vim.pack.add(specs)
 
 setup("mason.nvim", "mason", { install_root_dir = vim.fn.expand("~/.local/share/nvim/mason") })
 setup("which-key.nvim", "which-key")
+setup("lspsaga.nvim", "lspsaga", {
+  ui = {
+    border = "rounded",
+    title = true,
+    devicon = true,
+  },
+  lightbulb = { enable = false },
+  beacon = { enable = true },
+  finder = {
+    default = "def+ref+imp",
+    max_height = 0.6,
+  },
+  diagnostic = {
+    show_code_action = true,
+    jump_num_shortcut = true,
+  },
+  symbol_in_winbar = { enable = true },
+})
 setup("nvim-autopairs", "nvim-autopairs")
 setup("gitsigns.nvim", "gitsigns")
 setup("marks.nvim", "marks")
@@ -299,6 +317,7 @@ setup("lualine.nvim", "lualine", {
     lualine_y = { { "progress", padding = { left = 1, right = 1 } } }
   },
 })
+
 packadd("gruber-darker.nvim")
 pcall(vim.cmd.colorscheme, "gruber-darker")
 setup("transparent.nvim", "transparent",

@@ -2,7 +2,7 @@ local languages = require("plugins")
 
 local function on_attach(client, bufnr)
   if client:supports_method(vim.lsp.protocol.Methods.textDocument_hover) then
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr, desc = "Hover documentation" })
+    vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<cr>", { buffer = bufnr, desc = "Hover documentation" })
   end
 end
 
