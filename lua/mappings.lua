@@ -55,6 +55,31 @@ nmap("<C-c>", function()
   print("File copied to +register")
 end, "Copy whole file to clipboard")
 
+-- Open URLs in the Hyprland dropdown browser; keep normal system handling for files.
+local function open_popup_browser()
+  local target = vim.fn.expand("<cfile>")
+
+  -- Go imports are documentation targets rather than filesystem paths.
+  if vim.bo.filetype == "go" then
+    target = target:gsub('^[%[%(\"`]+', ""):gsub('[%]%)\"`;:,]+$', "")
+    if target:match("^[%w][%w%._-]*/") then
+      target = "https://pkg.go.dev/" .. target
+    end
+  end
+
+  if not target:match("^https?://") then
+    vim.ui.open(target)
+    return
+  end
+
+  vim.fn.jobstart({ "bash", vim.fn.expand("~/.config/hypr/scripts/PopupBrowser.sh"), target }, { detach = true })
+end
+
+nmap("gx", open_popup_browser, "Open URL in dropdown browser")
+nmap("<A-b>", function()
+  vim.fn.jobstart({ "bash", vim.fn.expand("~/.config/hypr/scripts/PopupBrowser.sh") }, { detach = true })
+end, "Toggle dropdown browser")
+
 nmap("<leader>fm", function()
   require("conform").format({ stop_after_first = true, lsp_fallback = true })
 end, "Format buffer")
