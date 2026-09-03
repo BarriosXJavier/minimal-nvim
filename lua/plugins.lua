@@ -277,7 +277,7 @@ with_plugin("blink.cmp", function()
     sources = { default = { "lsp", "path", "snippets", "buffer" } },
     fuzzy = { implementation = "prefer_rust" },
     snippets = { preset = "default", expand = function(snippet) vim.snippet.expand(snippet) end },
-    signature = { enabled = true, window = { show_documentation = true, border = "none" } },
+    signature = { enabled = true, window = { show_documentation = true, border = "rounded" } },
   })
 
   -- Make Lspsaga's `K` hover use the same surface as blink's documentation.
