@@ -31,6 +31,30 @@ local function tmap(lhs, rhs, desc, opts)
   map("t", lhs, rhs, vim.tbl_extend("force", { desc = desc }, opts or {}))
 end
 
+local function close_current_buffer()
+  local current = vim.api.nvim_get_current_buf()
+  local last = vim.fn.bufnr("$")
+  local next_buf
+
+  for offset = 1, last do
+    local candidate = ((current + offset - 1) % last) + 1
+    if candidate ~= current and vim.api.nvim_buf_is_valid(candidate) then
+      local buffer = vim.bo[candidate]
+      if buffer.buflisted and buffer.buftype == "" and buffer.filetype ~= "NvimTree" then
+        next_buf = candidate
+        break
+      end
+    end
+  end
+
+  if next_buf then
+    vim.api.nvim_win_set_buf(0, next_buf)
+    vim.cmd({ cmd = "bdelete", args = { tostring(current) } })
+  else
+    vim.cmd.bdelete()
+  end
+end
+
 imap("<C-h>", "<Left>", "Cursor left")
 imap("<C-j>", "<Down>", "Cursor down")
 imap("<C-k>", "<Up>", "Cursor up")
@@ -43,6 +67,7 @@ nmap(";", ":", "Command mode")
 nmap("<C-s>", "<cmd>w<CR>", "Save file")
 nmap("<Tab>", "<cmd>bnext<cr>", "Next buffer")
 nmap("<S-Tab>", "<cmd>bprev<cr>", "Prev buffer")
+nmap("<leader>bd", close_current_buffer, "Close current buffer")
 nmap("<C-d>", "<C-d>zz", "Scroll down and center")
 nmap("<C-u>", "<C-u>zz", "Scroll up and center")
 nmap("<C-Left>", "5<C-w><", "Decrease window width")
