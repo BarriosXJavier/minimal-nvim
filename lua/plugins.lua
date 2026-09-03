@@ -303,7 +303,7 @@ setup("indent-blankline.nvim", "ibl",
 setup("bufferline.nvim", "bufferline",
   { options = { offsets = { { filetype = "NvimTree", text = "NvimTree", highlight = "Directory", separator = true } } } })
 setup("lualine.nvim", "lualine", {
-  options = { icons_enabled = true, theme = "auto", component_separators = { left = "│", right = "│" }, section_separators = { left = "", right = "" }, globalstatus = true, refresh = { statusline = 1000, tabline = 1000, winbar = 1000 }, disabled_filetypes = { statusline = { "alpha", "dashboard", "oil", "neo-tree", "NvimTree", "toggleterm", "terminal", "Trouble", "lazy" } } },
+  options = { icons_enabled = true, theme = "auto", component_separators = { left = "", right = "" }, section_separators = { left = "", right = "" }, globalstatus = true, refresh = { statusline = 1000, tabline = 1000, winbar = 1000 }, disabled_filetypes = { statusline = { "alpha", "dashboard", "oil", "neo-tree", "NvimTree", "toggleterm", "terminal", "Trouble", "lazy" } } },
   extensions = { "nvim-tree" },
   sections = {
     lualine_a = { { "mode", padding = { left = 1, right = 1 }, color = { gui = "bold" } } },
