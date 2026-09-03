@@ -279,6 +279,10 @@ with_plugin("blink.cmp", function()
     snippets = { preset = "default", expand = function(snippet) vim.snippet.expand(snippet) end },
     signature = { enabled = true, window = { show_documentation = true, border = "none" } },
   })
+
+  -- Make Lspsaga's `K` hover use the same surface as blink's documentation.
+  vim.api.nvim_set_hl(0, "HoverNormal", { link = "BlinkCmpDoc" })
+  vim.api.nvim_set_hl(0, "HoverBorder", { link = "BlinkCmpDocBorder" })
 end)
 
 setup("toggleterm.nvim", "toggleterm",
