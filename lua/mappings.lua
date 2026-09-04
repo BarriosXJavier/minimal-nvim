@@ -100,13 +100,40 @@ local function open_popup_browser()
   vim.fn.jobstart({ "bash", vim.fn.expand("~/.config/hypr/scripts/PopupBrowser.sh"), target }, { detach = true })
 end
 
+local function open_hover_link()
+  local line = vim.api.nvim_get_current_line()
+  local target = line:match("%]%((https?://[^)%s]+)%)")
+  if not target then
+    target = vim.fn.expand("<cfile>")
+  end
+  if not target:match("^https?://") then
+    return
+  end
+
+  target = target:gsub("[.,;:!?]+$", "")
+  vim.fn.jobstart({ "bash", vim.fn.expand("~/.config/hypr/scripts/PopupBrowser.sh"), target }, { detach = true })
+end
+
 nmap("gx", open_popup_browser, "Open URL in dropdown browser")
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  group = vim.api.nvim_create_augroup("hover-link-mapping", { clear = true }),
+  callback = function(args)
+    vim.schedule(function()
+      if vim.api.nvim_buf_is_valid(args.buf) then
+        local buffer = vim.bo[args.buf]
+        if buffer.buftype == "nofile" and buffer.filetype == "markdown" then
+          vim.keymap.set("n", "gx", open_hover_link, { buffer = args.buf, desc = "Open hover documentation link" })
+        end
+      end
+    end)
+  end,
+})
 nmap("<A-b>", function()
   vim.fn.jobstart({ "bash", vim.fn.expand("~/.config/hypr/scripts/PopupBrowser.sh") }, { detach = true })
 end, "Toggle dropdown browser")
 
 nmap("<leader>fm", function()
-  require("conform").format({ stop_after_first = true, lsp_fallback = true })
+  require("conform").format({ stop_after_first = true, lsp_format = "fallback" })
 end, "Format buffer")
 
 nmap("<C-h>", "<C-w>h", "Move to left window")

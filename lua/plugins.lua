@@ -34,6 +34,10 @@ end
 
 local prettier = { "prettierd", "prettier" }
 local formatters_by_ft = {
+  sh = { "shfmt" },
+  zsh = { "shfmt" },
+  odin = { "odinfmt" },
+  zig = { "zigfmt" },
   lua = { "stylua" },
   rust = { "rustfmt" },
   go = { "gofmt" },
@@ -172,7 +176,10 @@ setup("lspsaga.nvim", "lspsaga", {
 setup("nvim-autopairs", "nvim-autopairs")
 setup("gitsigns.nvim", "gitsigns")
 setup("marks.nvim", "marks")
-setup("conform.nvim", "conform", { formatters_by_ft = formatters_by_ft })
+setup("conform.nvim", "conform", {
+  formatters_by_ft = formatters_by_ft,
+  format_on_save = { timeout_ms = 1000, lsp_format = "fallback" },
+})
 setup("autosave.nvim", "autosave", {
   enabled = true,
   execution_message = "",
