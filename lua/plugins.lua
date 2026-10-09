@@ -77,7 +77,27 @@ local languages = {
     zls = {},
     lua_ls = { cmd = { "lua-language-server" }, filetypes = { "lua" } },
     bashls = { cmd = { "bash-language-server" }, filetypes = { "sh", "zsh" } },
-    marksman = { filetypes = { "markdown" } },
+    marksman = {
+      filetypes = { "markdown", "markdown.mdx" },
+      root_markers = { ".marksman.toml", ".git" },
+      root_dir = function(bufnr, on_dir)
+        local home = vim.fs.normalize(vim.fn.expand("~"))
+        local root = vim.fs.root(bufnr, { ".marksman.toml", ".git" })
+        if root then
+          root = vim.fs.normalize(root)
+          if root ~= home then
+            on_dir(root)
+            return
+          end
+        end
+        local dir = vim.fs.normalize(vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)))
+        if dir ~= "" and dir ~= home then
+          on_dir(dir)
+        else
+          on_dir(nil)
+        end
+      end,
+    },
     sqls = { cmd = { "sqls" } },
     prisma = {},
     taplo = { filetypes = { "toml" } },
@@ -178,7 +198,6 @@ setup("gitsigns.nvim", "gitsigns")
 setup("marks.nvim", "marks")
 setup("conform.nvim", "conform", {
   formatters_by_ft = formatters_by_ft,
-  format_on_save = { timeout_ms = 1000, lsp_format = "fallback" },
 })
 setup("autosave.nvim", "autosave", {
   enabled = true,
