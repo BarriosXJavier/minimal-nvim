@@ -80,32 +80,13 @@ local languages = {
     marksman = {
       filetypes = { "markdown", "markdown.mdx" },
       root_markers = { ".marksman.toml", ".git" },
-      root_dir = function(bufnr, on_dir)
-        local home = vim.fs.normalize(vim.fn.expand("~"))
-        local root = vim.fs.root(bufnr, { ".marksman.toml", ".git" })
-        if root then
-          root = vim.fs.normalize(root)
-          if root ~= home then
-            on_dir(root)
-            return
-          end
-        end
-        local dir = vim.fs.normalize(vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)))
-        if dir ~= "" and dir ~= home then
-          on_dir(dir)
-        else
-          on_dir(nil)
-        end
-      end,
     },
     sqls = { cmd = { "sqls" } },
-    prisma = {},
     taplo = { filetypes = { "toml" } },
     yamlls = {},
     ols = {},
     laravel_ls = {},
     intelephense = {},
-    vue_language_server = {},
   },
 }
 
@@ -186,6 +167,10 @@ setup("lspsaga.nvim", "lspsaga", {
   finder = {
     default = "def+ref+imp",
     max_height = 0.6,
+  },
+  hover = {
+    max_width = 0.5,
+    max_height = 0.9,
   },
   diagnostic = {
     show_code_action = true,
@@ -277,7 +262,7 @@ with_plugin("blink.cmp", function()
     },
     cmdline = { enabled = true },
     completion = {
-      documentation = { auto_show = true, auto_show_delay_ms = 500, window = { border = "rounded", direction_priority = { menu_north = { "e", "w" }, menu_south = { "e", "w" } } } },
+      documentation = { auto_show = true, auto_show_delay_ms = 500, window = { border = "rounded", max_width = 80, max_height = 25, direction_priority = { menu_north = { "e", "w" }, menu_south = { "e", "w" } } } },
       list = { selection = { auto_insert = true } },
       menu = {
         auto_show = true,
@@ -303,7 +288,7 @@ with_plugin("blink.cmp", function()
     sources = { default = { "lsp", "path", "snippets", "buffer" } },
     fuzzy = { implementation = "prefer_rust" },
     snippets = { preset = "default", expand = function(snippet) vim.snippet.expand(snippet) end },
-    signature = { enabled = true, window = { show_documentation = true, border = "rounded" } },
+    signature = { enabled = true, window = { show_documentation = true, border = "rounded", max_width = 80, max_height = 25 } },
   })
 
   -- Make Lspsaga's `K` hover use the same surface as blink's documentation.
